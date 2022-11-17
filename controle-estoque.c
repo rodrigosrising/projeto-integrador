@@ -10,9 +10,9 @@ int ordenado = 0;// variável p/ controlar a ordenação dos dados
 // Tipo de dado especial (Registro)
 typedef struct TProduto{
     long int codigo;
-    int grupo, quantidade;
-    char nome[40], desc[40];
-    float v_compra, v_venda;
+    int grupo, lucro;
+    char descricao[41], unidade[3], fornecedor[41];
+    float pr_compra, pr_venda, quantidade, estoque_min, custoTotal, receitaTotal, vendidos, valorLucro;
 }Tproduto;
 // Escopo do programa
 void leitura(Tproduto estoque[], int *tamanho);//gera o arquivo .dat na primeira vez
@@ -52,13 +52,13 @@ int main(){
 				break;
 			}        	
             case 2:{
-            	atualizar(estoque, &tamanho);
-            	gravacao(estoque, tamanho);
+//            	atualizar(estoque, &tamanho);
+//            	gravacao(estoque, tamanho);
 				break;
 			}
 			case 3:{
-				excluir(estoque, &tamanho);
-				gravacao(estoque, tamanho);
+//				excluir(estoque, &tamanho);
+//				gravacao(estoque, tamanho);
 				break;
 			}
 			case 4:{
@@ -70,7 +70,7 @@ int main(){
 				break;
 			}
 			case 6:{
-				relatorio(estoque, &tamanho);
+				// relatorio(estoque, &tamanho);
 				break;
 			}	
             case 0: 
@@ -199,17 +199,21 @@ void cadastrar(Tproduto estoque[], int *tamanho){
 		return;	
 	}
 	
-	printf("Nome do produto----------------------------: ");
-	gets(&aux.nome);
-	fflush(stdin);
+	// Descrição do produto
+	do{
+		printf("Descrição---------------------------------------: ");
+		gets(aux.descricao);
+		fflush(stdin);
+		if(aux.descricao[0] == '\0'){
+			printf("O campo descricao não pode ser vazio. \n");	
+		}
+	}while(aux.descricao[0] == '\0');
 	
-	printf("Descrição do produto-----------------------: ");
-	gets(aux.desc);
-	fflush(stdin);
 	
+	// Quantidade do produto
 	do{
 		printf("Quantidade de produto em estoque-----------: ");
-		scanf("%i", &aux.quantidade);
+		scanf("%f", &aux.quantidade);
 		fflush(stdin);
 		if(aux.quantidade < 0){
 			printf("A quantidade não pode ser negativa.\n");	
@@ -217,21 +221,59 @@ void cadastrar(Tproduto estoque[], int *tamanho){
 	}while(aux.quantidade < 0);
 	
 	
-	printf("Grupo do produto---------------------------: ");
-	scanf("%i", &aux.grupo);
-	fflush(stdin);
-
+	// Unidade do produto
+	do{
+		printf("Unidade [KG, PC, UN, LT] -----------: ");
+		gets(aux.unidade);
+		fflush(stdin);
+		if(aux.unidade[0] == '\0'){
+			printf("O campo unidade não pode ser vazio. \n");	
+		}
+	}while(aux.unidade[0] == '\0');
+	
+	
+	// Grupo do produto
+	do{
+		printf("Grupo:\n[1] refeição\n[2] bebidas\n[3] sobremesas\n");
+		printf("Selecione uma Categoria--------------------: ");
+		scanf("%i", &aux.grupo);
+		fflush(stdin);
+		if(aux.grupo != 1 && aux.grupo != 2 && aux.grupo != 3)
+			printf("Digite uma categoria válida\n");
+	}while(aux.grupo != 1 && aux.grupo != 2 && aux.grupo != 3);
+	
+	// Fornecedor do produto
+	do{
+		printf("Fornecedor---------------------------------------: ");
+		gets(aux.fornecedor);
+		fflush(stdin);
+		if(aux.fornecedor[0] == '\0'){
+			printf("O campo fornecedor não pode ser vazio. \n");	
+		}
+	}while(aux.fornecedor[0] == '\0');
+	
+	//Preço de compra do produto
 	do{
 		printf("Preco de compra do produto-----------------: ");
-		scanf("%f", &aux.v_compra);
+		scanf("%f", &aux.pr_compra);
 		fflush(stdin);
-		if(aux.v_compra < 0){
+		if(aux.pr_compra < 0){
 			printf("O preço de compra não pode ser negativo.\n");
 		}
-	}while(aux.v_compra < 0);
+	}while(aux.pr_compra < 0);
 	
-	aux.v_venda = aux.v_compra * 1.9;
-	printf("Preco de venda do produto-----------------: %.2f\n", aux.v_venda);
+	//Lucro desejado para o produto
+	do{
+		printf("Lucro desejado em %%-----------------: ");
+		scanf("%i", &aux.lucro);
+		fflush(stdin);
+		if(aux.lucro < 0){
+			printf("O preço de compra não pode ser negativo.\n");
+		}
+	}while(aux.lucro < 0);
+	aux.pr_venda =  aux.pr_compra + (aux.pr_compra * aux.lucro / 100);
+	
+	printf("Preco de venda do produto-----------------: %.2f\n", aux.pr_venda);
 	
 	
 	int validaCadastro;
@@ -248,224 +290,197 @@ void cadastrar(Tproduto estoque[], int *tamanho){
 	}
 }
 
-void mostra(Tproduto estoque[], int chave){
-	printf("\n======================\n");
-	printf("Código:           %ld \n", estoque[chave].codigo);
-	printf("Nome:             %s \n", estoque[chave].nome);
-	printf("Descricao:        %s \n", estoque[chave].desc);
-	printf("Quantidade:       %i \n", estoque[chave].quantidade);
-	printf("Grupo:            %i \n", estoque[chave].grupo);
-	printf("Valor de compra:  R$ %.2f \n", estoque[chave].v_compra);
-	printf("Valor de venda:   R$ %.2f \n", estoque[chave].v_venda);	
-	printf("\n======================\n");
-	return;
-}
 
-void atualizar(Tproduto estoque[], int *tamanho){
-	
-	Tproduto aux;
-	
-	int pos, cod, opc;
-	char correto = "N";
-	
-	printf("Código: ");
-	scanf("%i", &cod);
-	fflush(stdin);
-	
-	pos = pesquisabinaria(estoque, cod, *tamanho);
-	if(pos >= 0){
-		aux = estoque[pos];
-		mostra(estoque, pos);
-		
-		printf("O que deseja alterar? \n");
-		printf("1 - Nome do produto: \n");
-		printf("2 - Descrição do produto: \n");
-		printf("3 - Quantidade do produto: \n");
-		printf("4 - Grupo do produto: \n");
-		printf("5 - Valor de compra do produto: \n");
-		printf("0 - Sair: \n");
-		scanf("%i", &opc);
-		fflush(stdin);
-		
-		switch(opc){
-		case 1:
-			printf("\nDigite o novo nome do produto: ");
-			
-			gets(&aux.nome);
-			fflush(stdin);
-			
-			{
-				int validaCadastro;
-				printf("Confirmar alteração?\n 1 - Sim   0 - Não \n");
-				scanf("%i", &validaCadastro);
-				fflush(stdin);
-				if(validaCadastro == 1){
-					
-					estoque[*tamanho] = aux;
-					(*tamanho) ++;
-					ordenado = 0;
-					
-					printf("\nNome atualizado!\n\n");
-				}
-			}
-			
-			break;
-		case 2:
-			printf("\nDigite a nova descrição do produto: ");
-			gets(aux.desc);
-			fflush(stdin);
-			
-			{
-				int validaCadastro;
-				printf("Confirmar alteração?\n 1 - Sim   0 - Não \n");
-				scanf("%i", &validaCadastro);
-				fflush(stdin);
-				if(validaCadastro == 1){
-					
-					estoque[*tamanho] = aux;
-					(*tamanho) ++;
-					ordenado = 0;
-					
-					printf("\nDescrição atualizada!\n\n");
-				}
-			}
-			break;
-		case 3:
-			do{
-				printf("Quantidade de produto em estoque-----------: ");
-				scanf("%i", &aux.quantidade);
-				fflush(stdin);
-				if(aux.quantidade < 0){
-					printf("A quantidade não pode ser negativa.\n");	
-				}
-			}while(aux.quantidade < 0);
-			
-			{
-				int validaCadastro;
-				printf("Confirmar alteração?\n 1 - Sim   0 - Não \n");
-				scanf("%i", &validaCadastro);
-				fflush(stdin);
-				if(validaCadastro == 1){
-					
-					estoque[*tamanho] = aux;
-					(*tamanho) ++;
-					ordenado = 0;
-					
-					printf("\nQuantidade atualizada!\n\n");
-				}
-			}
-			
-			break;
-		case 4:
-			printf("\nDigite o grupo do produto: ");
-			scanf("%i", &aux.grupo);
-			fflush(stdin);
-			
-			{
-				int validaCadastro;
-				printf("Confirmar alteração?\n 1 - Sim   0 - Não \n");
-				scanf("%i", &validaCadastro);
-				fflush(stdin);
-				if(validaCadastro == 1){
-					
-					estoque[*tamanho] = aux;
-					(*tamanho) ++;
-					ordenado = 0;
-					
-					printf("\nGrupo atualizado!\n\n");
-				}
-			}
-			break;
-		case 5:
-			do{
-				printf("Preco de compra do produto-----------------: ");
-				scanf("%f", &aux.v_compra);
-				fflush(stdin);
-				if(aux.v_compra < 0){
-					printf("O preço de compra não pode ser negativo.\n");
-				}
-			}while(aux.v_compra < 0);
-	
-			aux.v_venda = aux.v_compra * 1.9;
-			
-			{
-				int validaCadastro;
-				printf("Confirmar alteração?\n 1 - Sim   0 - Não \n");
-				scanf("%i", &validaCadastro);
-				fflush(stdin);
-				if(validaCadastro == 1){
-					
-					estoque[*tamanho] = aux;
-					(*tamanho) ++;
-					ordenado = 0;
-					
-					printf("\nPreço de compra atualizado!\n\n");
-				}
-			}
-
-//			confirmacao(estoque, *tamanho, "Preço de compra atualizado");
-			
-			break;
-		case 0:
-			printf("Sair");
-			break;
-		default:
-			printf("Opção Inválida");
-			break; 
-		}
-	} else {
-		printf("nao cadastrado");
-	}
-}
-
-//void confirmacao(Tproduto estoque[], int *tamanho, char textoConfirma[50]){
-//	int validaCadastro;
-//	printf("Confirmar alteração?\n 1 - Sim   0 - Não \n");
-//	scanf("%i", &validaCadastro);
+//void atualizar(Tproduto estoque[], int *tamanho){
+//	
+//	Tproduto aux;
+//	
+//	int pos, cod, opc;
+//	char correto = "N";
+//	
+//	printf("Código: ");
+//	scanf("%i", &cod);
 //	fflush(stdin);
-//	if(validaCadastro == 1){
+//	
+//	pos = pesquisabinaria(estoque, cod, *tamanho);
+//	if(pos >= 0){
+//		aux = estoque[pos];
+//		mostra(estoque, pos);
 //		
-//		estoque[*tamanho] = aux;
-//		(*tamanho) ++;
-//		ordenado = 0;
+//		printf("O que deseja alterar? \n");
+//		printf("1 - Nome do produto: \n");
+//		printf("2 - Descrição do produto: \n");
+//		printf("3 - Quantidade do produto: \n");
+//		printf("4 - Grupo do produto: \n");
+//		printf("5 - Valor de compra do produto: \n");
+//		printf("0 - Sair: \n");
+//		scanf("%i", &opc);
+//		fflush(stdin);
 //		
-//		printf("\n%s!\n\n", textoConfirma);
+//		switch(opc){
+//		case 1:
+//			printf("\nDigite o novo nome do produto: ");
+//			
+//			gets(&aux.nome);
+//			fflush(stdin);
+//			
+//			{
+//				int validaCadastro;
+//				printf("Confirmar alteração?\n 1 - Sim   0 - Não \n");
+//				scanf("%i", &validaCadastro);
+//				fflush(stdin);
+//				if(validaCadastro == 1){
+//					
+//					estoque[*tamanho] = aux;
+//					(*tamanho) ++;
+//					ordenado = 0;
+//					
+//					printf("\nNome atualizado!\n\n");
+//				}
+//			}
+//			
+//			break;
+//		case 2:
+//			printf("\nDigite a nova descrição do produto: ");
+//			gets(aux.desc);
+//			fflush(stdin);
+//			
+//			{
+//				int validaCadastro;
+//				printf("Confirmar alteração?\n 1 - Sim   0 - Não \n");
+//				scanf("%i", &validaCadastro);
+//				fflush(stdin);
+//				if(validaCadastro == 1){
+//					
+//					estoque[*tamanho] = aux;
+//					(*tamanho) ++;
+//					ordenado = 0;
+//					
+//					printf("\nDescrição atualizada!\n\n");
+//				}
+//			}
+//			break;
+//		case 3:
+//			do{
+//				printf("Quantidade de produto em estoque-----------: ");
+//				scanf("%i", &aux.quantidade);
+//				fflush(stdin);
+//				if(aux.quantidade < 0){
+//					printf("A quantidade não pode ser negativa.\n");	
+//				}
+//			}while(aux.quantidade < 0);
+//			
+//			{
+//				int validaCadastro;
+//				printf("Confirmar alteração?\n 1 - Sim   0 - Não \n");
+//				scanf("%i", &validaCadastro);
+//				fflush(stdin);
+//				if(validaCadastro == 1){
+//					
+//					estoque[*tamanho] = aux;
+//					(*tamanho) ++;
+//					ordenado = 0;
+//					
+//					printf("\nQuantidade atualizada!\n\n");
+//				}
+//			}
+//			
+//			break;
+//		case 4:
+//			printf("\nDigite o grupo do produto: ");
+//			scanf("%i", &aux.grupo);
+//			fflush(stdin);
+//			
+//			{
+//				int validaCadastro;
+//				printf("Confirmar alteração?\n 1 - Sim   0 - Não \n");
+//				scanf("%i", &validaCadastro);
+//				fflush(stdin);
+//				if(validaCadastro == 1){
+//					
+//					estoque[*tamanho] = aux;
+//					(*tamanho) ++;
+//					ordenado = 0;
+//					
+//					printf("\nGrupo atualizado!\n\n");
+//				}
+//			}
+//			break;
+//		case 5:
+//			do{
+//				printf("Preco de compra do produto-----------------: ");
+//				scanf("%f", &aux.v_compra);
+//				fflush(stdin);
+//				if(aux.v_compra < 0){
+//					printf("O preço de compra não pode ser negativo.\n");
+//				}
+//			}while(aux.v_compra < 0);
+//	
+//			aux.v_venda = aux.v_compra * 1.9;
+//			
+//			{
+//				int validaCadastro;
+//				printf("Confirmar alteração?\n 1 - Sim   0 - Não \n");
+//				scanf("%i", &validaCadastro);
+//				fflush(stdin);
+//				if(validaCadastro == 1){
+//					
+//					estoque[*tamanho] = aux;
+//					(*tamanho) ++;
+//					ordenado = 0;
+//					
+//					printf("\nPreço de compra atualizado!\n\n");
+//				}
+//			}
+//
+////			confirmacao(estoque, *tamanho, "Preço de compra atualizado");
+//			
+//			break;
+//		case 0:
+//			printf("Sair");
+//			break;
+//		default:
+//			printf("Opção Inválida");
+//			break; 
+//		}
+//	} else {
+//		printf("nao cadastrado");
 //	}
-//}	
+//}
 	
-void excluir(Tproduto estoque[], int *tamanho){
-	if(*tamanho == 0){
-		printf("Arquivo Vazio");
-		return;
-	}
-	int pos, cod, opc;
-	char correto = "N";
-	
-	printf("Código do produto que deseja excluir: ");
-	scanf("%i", &cod);
-	
-	pos = pesquisabinaria(estoque, cod, *tamanho);
-	if(pos >= 0){
-		mostra(estoque, pos);
-		
-		{
-			int validaCadastro;
-			printf("Confirmar exclusão?\n 1 - Sim   0 - Não \n");
-			scanf("%i", &validaCadastro);
-			fflush(stdin);
-			if(validaCadastro == 1){
-				
-				int i;
-				for(i = 0; i < (*tamanho) -1; i++){
-					estoque[i] = estoque[i+1];
-				}
-				printf("\nProduto excluido\n");
-			} else {
-				printf("\nNão foi possivel remover o produto\n");
-			}
-		}		
-	}
-}
+//void excluir(Tproduto estoque[], int *tamanho){
+//	if(*tamanho == 0){
+//		printf("Arquivo Vazio");
+//		return;
+//	}
+//	int pos, cod, opc;
+//	char correto = "N";
+//	
+//	printf("Código do produto que deseja excluir: ");
+//	scanf("%i", &cod);
+//	
+//	pos = pesquisabinaria(estoque, cod, *tamanho);
+//	if(pos >= 0){
+//		mostra(estoque, pos);
+//		
+//		{
+//			int validaCadastro;
+//			printf("Confirmar exclusão?\n 1 - Sim   0 - Não \n");
+//			scanf("%i", &validaCadastro);
+//			fflush(stdin);
+//			if(validaCadastro == 1){
+//				
+//				int i;
+//				for(i = 0; i < (*tamanho) -1; i++){
+//					estoque[i] = estoque[i+1];
+//				}
+//				printf("\nProduto excluido\n");
+//			} else {
+//				printf("\nNão foi possivel remover o produto\n");
+//			}
+//		}		
+//	}
+//}
 
 void consultar(Tproduto estoque[], int *tamanho){
 	
@@ -500,20 +515,20 @@ void consultar(Tproduto estoque[], int *tamanho){
 		break;
 	case 2:
 		
-		{
-			printf("Digite o código para pesquisa: ");
-			scanf("%i", &cod);
-			fflush(stdin);
-			
-			pos = pesquisabinaria(estoque, cod, *tamanho);
-			if(pos >= 0){;				
-				mostra(estoque, pos);
-				system("pause");
-				system("cls");
-			} else {
-				printf("Código não cadastrado");
-			}
-		}
+//		{
+//			printf("Digite o código para pesquisa: ");
+//			scanf("%i", &cod);
+//			fflush(stdin);
+//			
+//			pos = pesquisabinaria(estoque, cod, *tamanho);
+//			if(pos >= 0){;				
+//				mostra(estoque, pos);
+//				system("pause");
+//				system("cls");
+//			} else {
+//				printf("Código não cadastrado");
+//			}
+//		}
 		
 		break;
 	case 0:
@@ -533,5 +548,25 @@ void relatorio(Tproduto estoque[], int *tamanho){
 	for(chave = 0; chave < *tamanho; chave++){
 		mostra(estoque, chave);
 	}
+}
+
+void calculaMargemLucro(float pr_venda, float vendidos, float pr_compra, float quantidade){
+	float receitaTotal = pr_venda * vendidos;
+	float custoTotal = pr_compra * quantidade;
+	float valorLucro = receitaTotal - custoTotal;
 	
+	int lucro = valorLucro/custoTotal * 100;
+	
+	return lucro;
+}
+
+
+void mostra(Tproduto estoque[], int chave){
+	printf("Código: %-59ld Grupo: %-3i\n", estoque[chave].codigo, estoque[chave].grupo);
+	printf("Descricao: %-53s Unidade: %-3s\n", estoque[chave].descricao, estoque[chave].unidade);
+	printf("Fornecedor: %59s\n", estoque[chave].fornecedor);
+	printf("Preço de Compra: R$ %-8.2f  Preço de Venda: R$ %-8.2f  Lucro Mínimo: %i%%\n", estoque[chave].pr_compra, estoque[chave].pr_venda, estoque[chave].lucro);
+	printf("Quantidade em Estoque: %-25f Quantidade Mínima: %-25f\n", estoque[chave].quantidade, estoque[chave].quantidade);
+	printf("----------------------------------------------------------------------------\n");
+	return;
 }
