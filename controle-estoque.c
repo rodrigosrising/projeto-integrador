@@ -12,21 +12,37 @@ typedef struct TProduto{
     long int codigo;
     int grupo, lucro;
     char descricao[41], unidade[3], fornecedor[41];
-    float pr_compra, pr_venda, quantidade, estoque_min, custoTotal, receitaTotal, vendidos, valorLucro;
+    float pr_compra, pr_venda, quantidade, quantidadeParcial, estoque_min, custoTotal, receitaTotal, valorLucro;
+    float vendidos;
 }Tproduto;
+
+
 // Escopo do programa
-void leitura(Tproduto estoque[], int *tamanho);//gera o arquivo .dat na primeira vez
-void gravacao(Tproduto estoque[], int tamanho);// realiza a gravação dos dado no arquivo
-int pesquisa(Tproduto estoque[], int codigo, int *tamanho);// busca e retorna a posição do produto no vetor
+void leitura(Tproduto estoque[], int *tamanho);						// gera o arquivo .dat na primeira vez
+void gravacao(Tproduto estoque[], int tamanho);						// realiza a gravação dos dado no arquivo
+int pesquisa(Tproduto estoque[], int codigo, int *tamanho);			// busca e retorna a posição do produto no vetor
+void ordena(Tproduto estoque[], int tamanho); 						// ordena o cadastro dos produtos por código
 int pesquisabinaria(Tproduto estoque[], int chave, int tamanho);
-int vazio(int tamanho);// função auxiliar para da pesquisa binária
-void ordena(Tproduto estoque[], int tamanho); //ordena o cadastro dos produtos por código
-void cadastrar(Tproduto estoque[], int *tamanho); //faz o cadastro dos produtos
-void mostra(Tproduto estoque[], int chave); //exibe os dados do produto
-void atualizar(Tproduto estoque[], int *tamanho); //Altera os dados do produto
-void consultar(Tproduto estoque[], int *tamanho); //faz a busca pelo produto
+int vazio(int tamanho);												// função auxiliar para da pesquisa binária
+int calculaMargemLucro(float pr_venda, float vendidos, float pr_compra, float quantidade);
+
+//CRUD
+void cadastrar(Tproduto estoque[], int *tamanho); 	//faz o cadastro dos produtos
+void atualizar(Tproduto estoque[], int *tamanho); 	//Altera os dados do produto
+void excluir (Tproduto estoque[], int *tamanho);	//Remove o produto selecionado
+void consultar(Tproduto estoque[], int *tamanho); 	//faz a busca pelo produto
+
+
+//Relatorios
 void relatorio(Tproduto estoque[], int *tamanho);
-//void confirmacao(Tproduto estoque[], int *tamanho, char textoConfirma[50]);
+
+void vender(Tproduto estoque[], int *tamanho);
+
+
+// Exibir dados
+void mostraFicha(Tproduto estoque[], int chave); 	//exibe os dados do produto em formato de ficha
+void mostraLista(Tproduto estoque[], int chave); 	//exibe os dados do produto em formato de lista
+void mostraListaVenda(Tproduto estoque[], int chave);
 
 int main(){
 	setlocale(LC_ALL,"");
@@ -35,13 +51,13 @@ int main(){
     char nome[20];
     leitura(estoque, &tamanho);// abre o arquivo da base de dados
     do{
-        printf ("\n 1- CADASTRAR\n");
-        printf (" 2- ATUALIZAR\n");
-        printf (" 3- EXCLUIR\n");
-        printf (" 4- CONSULTAR\n");
-    	printf (" 5- VENDER\n");
-    	printf (" 6- RELATORIO\n");
-        printf (" 0- SAIR\n");
+        printf ("\n 1 - CADASTRAR\n");
+        printf (" 2 - ATUALIZAR\n");
+        printf (" 3 - EXCLUIR\n");
+        printf (" 4 - CONSULTAR\n");
+    	printf (" 5 - VENDER\n");
+    	printf (" 6 - RELATORIO\n");
+        printf (" 0 - SAIR\n");
         printf ("\nESCOLHA A OPCAO DESEJADA:\n");
         scanf ("%d",&opcao);
         system("cls");
@@ -57,8 +73,8 @@ int main(){
 				break;
 			}
 			case 3:{
-//				excluir(estoque, &tamanho);
-//				gravacao(estoque, tamanho);
+				excluir(estoque, &tamanho);
+				gravacao(estoque, tamanho);
 				break;
 			}
 			case 4:{
@@ -66,11 +82,12 @@ int main(){
 				break;
 			}
 			case 5:{
-				
+				vender(estoque, &tamanho);
+				gravacao(estoque, tamanho);
 				break;
 			}
 			case 6:{
-				// relatorio(estoque, &tamanho);
+				 relatorio(estoque, &tamanho);
 				break;
 			}	
             case 0: 
@@ -174,7 +191,7 @@ void ordena(Tproduto estoque[], int tamanho){
 
 void cadastrar(Tproduto estoque[], int *tamanho){
 	Tproduto aux;
-	
+	aux.vendidos = 0;
 	//Verifica se o arquivo está cheio
 	if(*tamanho == MAX){
 		printf("Arquivo cheio! \n");
@@ -261,19 +278,28 @@ void cadastrar(Tproduto estoque[], int *tamanho){
 			printf("O preço de compra não pode ser negativo.\n");
 		}
 	}while(aux.pr_compra < 0);
-	
-	//Lucro desejado para o produto
+
+
+	//Preço de venda do produto
 	do{
-		printf("Lucro desejado em %%-----------------: ");
-		scanf("%i", &aux.lucro);
+		printf("Preco de venda do produto-----------------: ");
+		scanf("%f", &aux.pr_venda);
 		fflush(stdin);
-		if(aux.lucro < 0){
-			printf("O preço de compra não pode ser negativo.\n");
+		if(aux.pr_venda < 0){
+			printf("O preço de venda não pode ser negativo.\n");
 		}
-	}while(aux.lucro < 0);
-	aux.pr_venda =  aux.pr_compra + (aux.pr_compra * aux.lucro / 100);
+	}while(aux.pr_venda < 0);
 	
-	printf("Preco de venda do produto-----------------: %.2f\n", aux.pr_venda);
+	{
+		aux.quantidadeParcial = aux.quantidade;
+		aux.receitaTotal = aux.pr_venda * aux.vendidos;
+		aux.custoTotal = aux.pr_compra * aux.quantidade;
+		aux.valorLucro = aux.receitaTotal - aux.custoTotal;
+	
+		aux.lucro = aux.valorLucro/aux.custoTotal * 100;
+		
+	printf("RT: %.2f     CT: %.2f     VL: %.2f     L: %i \n", aux.receitaTotal, aux.custoTotal, aux.valorLucro, aux.lucro);
+	}
 	
 	
 	int validaCadastro;
@@ -308,7 +334,7 @@ void cadastrar(Tproduto estoque[], int *tamanho){
 //		mostra(estoque, pos);
 //		
 //		printf("O que deseja alterar? \n");
-//		printf("1 - Nome do produto: \n");
+//		printf("1 - Descrição do produto: \n");
 //		printf("2 - Descrição do produto: \n");
 //		printf("3 - Quantidade do produto: \n");
 //		printf("4 - Grupo do produto: \n");
@@ -448,48 +474,46 @@ void cadastrar(Tproduto estoque[], int *tamanho){
 //	}
 //}
 	
-//void excluir(Tproduto estoque[], int *tamanho){
-//	if(*tamanho == 0){
-//		printf("Arquivo Vazio");
-//		return;
-//	}
-//	int pos, cod, opc;
-//	char correto = "N";
-//	
-//	printf("Código do produto que deseja excluir: ");
-//	scanf("%i", &cod);
-//	
-//	pos = pesquisabinaria(estoque, cod, *tamanho);
-//	if(pos >= 0){
-//		mostra(estoque, pos);
-//		
-//		{
-//			int validaCadastro;
-//			printf("Confirmar exclusão?\n 1 - Sim   0 - Não \n");
-//			scanf("%i", &validaCadastro);
-//			fflush(stdin);
-//			if(validaCadastro == 1){
-//				
-//				int i;
-//				for(i = 0; i < (*tamanho) -1; i++){
-//					estoque[i] = estoque[i+1];
-//				}
-//				printf("\nProduto excluido\n");
-//			} else {
-//				printf("\nNão foi possivel remover o produto\n");
-//			}
-//		}		
-//	}
-//}
+void excluir (Tproduto estoque[], int *tamanho){
+     if(*tamanho==0){
+        printf("\nREGISTRO VAZIO!\n\n");
+        return;
+     }
+     int posicao, i, codigo;
+     
+	 char confirma='n';
+     printf("Codigo a ser excluido......:");
+	 scanf("%d", &codigo);
+	 fflush(stdin);
+     posicao=pesquisabinaria(estoque, codigo, *tamanho);
+     
+     if (posicao>=0) {//encontrou registro
+            mostraLista(estoque, posicao);
+            printf("Confirma a exclusao do registro desse produto? (S/N) ");
+			fflush(stdin);
+            confirma=getchar(); fflush(stdin);
+            if (confirma == 's' || confirma == 'S'){
+                for (i=posicao;i<(*tamanho)-1;i++) // copia os dados do proximo registro para o anterior
+                    estoque[i]=estoque[i+1];
+            (*tamanho)--;
+        	printf("REGISTRO REMOVIDO!\n\n");
+            }else
+                printf("\n O REGRISTRO NAO FOI EXCLUIDO!\n\n");
+     }else
+         printf("O REGRISTRO NAO FOI LOCALIZADO!\n\n");
+         printf("APERTE ENTER PARA VOLTAR AO MENU");
+         getchar();
+         system("cls");
+         return;
+}
 
 void consultar(Tproduto estoque[], int *tamanho){
 	
 	int pos, cod, opc;
-	char correto = "N";
 	
 	printf("Pesquisar produto: \n");
 	printf("1 - Pesquisar produto por código \n");
-	printf("2 - Pesquisar produtos por nome \n");
+	printf("2 - Pesquisar produtos por descrição \n");
 	printf("0 - Sair \n");
 	scanf("%i", &opc);
 	fflush(stdin);
@@ -504,31 +528,35 @@ void consultar(Tproduto estoque[], int *tamanho){
 			
 			pos = pesquisabinaria(estoque, cod, *tamanho);
 			if(pos >= 0){;				
-				mostra(estoque, pos);
+				mostraFicha(estoque, pos);
 				system("pause");
 				system("cls");
 			} else {
 				printf("Código não cadastrado");
+				system("pause");
+				system("cls");
 			}
 		}
 		
 		break;
 	case 2:
 		
-//		{
-//			printf("Digite o código para pesquisa: ");
-//			scanf("%i", &cod);
-//			fflush(stdin);
-//			
-//			pos = pesquisabinaria(estoque, cod, *tamanho);
-//			if(pos >= 0){;				
-//				mostra(estoque, pos);
-//				system("pause");
-//				system("cls");
-//			} else {
-//				printf("Código não cadastrado");
-//			}
-//		}
+		{
+			printf("Digite o código para pesquisa: ");
+			scanf("%i", &cod);
+			fflush(stdin);
+			
+			pos = pesquisabinaria(estoque, cod, *tamanho);
+			if(pos >= 0){;				
+				mostraLista(estoque, pos);
+				system("pause");
+				system("cls");
+			} else {
+				printf("Código não cadastrado");
+				system("pause");
+				system("cls");
+			}
+		}
 		
 		break;
 	case 0:
@@ -541,32 +569,108 @@ void consultar(Tproduto estoque[], int *tamanho){
 		
 }
 
+void vender(Tproduto estoque[], int *tamanho){
+	
+	int pos, cod;
+	char confirma='n';
+	Tproduto aux;
+	
+	
+	printf("Código: ");
+	scanf("%i", &cod);
+	fflush(stdin);
+	
+	pos = pesquisabinaria(estoque, cod, *tamanho);
+	
+	if(pos >= 0){
+		aux = estoque[pos];
+		mostraListaVenda(estoque, pos);
+		
+		do{
+			printf("Quantos produtos deseja comprar? ");
+			scanf("%f", &aux.vendidos);
+			printf("\n");
+			fflush(stdin);
+			if(aux.vendidos > aux.quantidadeParcial){
+				printf("A quantidade informada é maior que nosso estoque.\n");
+			}
+			if(aux.vendidos <= 0){
+				printf("A quantidade informada não pode ser menor que 0.\n");
+			}
+		}while(aux.vendidos <= 0 || aux.vendidos > aux.quantidadeParcial);
+
+		printf("Itens: %.2f  Valor a pagar: R$ %.2f \n", aux.vendidos, (aux.vendidos * aux.pr_venda));
+		
+		aux.quantidadeParcial = aux.quantidadeParcial - aux.vendidos;
+		aux.receitaTotal = aux.pr_venda * aux.vendidos;
+		aux.custoTotal = aux.pr_compra * aux.quantidadeParcial;
+		aux.valorLucro = aux.receitaTotal - aux.custoTotal;
+		aux.lucro = aux.valorLucro/aux.custoTotal * 100;
+		printf("RT: %.2f     CT: %.2f     VL: %.2f     L: %i \n", aux.receitaTotal, aux.custoTotal, aux.valorLucro, aux.lucro);
+		
+		{
+			int validaCadastro;
+			printf("Confirmar venda?\n 1 - Sim   0 - Não \n");
+			scanf("%i", &validaCadastro);
+			fflush(stdin);
+			if(validaCadastro == 1){
+							
+				estoque[pos] = aux;
+				
+				printf("\nVenda realizada!\n\n");
+				system("pause");
+				system("cls");
+			}
+		}
+		
+	} else {
+		printf("nao cadastrado");
+	}
+}
+
 void relatorio(Tproduto estoque[], int *tamanho){
 	int chave, pos, cod, opc;
 	pos = pesquisabinaria(estoque, cod, *tamanho);
 	
 	for(chave = 0; chave < *tamanho; chave++){
-		mostra(estoque, chave);
+		mostraFicha(estoque, chave);
 	}
+	system("pause");
+	system("cls");
 }
 
-void calculaMargemLucro(float pr_venda, float vendidos, float pr_compra, float quantidade){
-	float receitaTotal = pr_venda * vendidos;
-	float custoTotal = pr_compra * quantidade;
-	float valorLucro = receitaTotal - custoTotal;
-	
-	int lucro = valorLucro/custoTotal * 100;
-	
-	return lucro;
-}
+//int calculaMargemLucro(float pr_venda, float vendidos, float pr_compra, float quantidade){
+//	float receitaTotal = pr_venda * vendidos;
+//	float custoTotal = pr_compra * quantidade;
+//	float valorLucro = receitaTotal - custoTotal;
+//	
+//	int lucro = valorLucro/custoTotal * 100;
+//	
+//	// return;
+//	return lucro;
+//}
 
 
-void mostra(Tproduto estoque[], int chave){
+void mostraFicha(Tproduto estoque[], int chave){
 	printf("Código: %-59ld Grupo: %-3i\n", estoque[chave].codigo, estoque[chave].grupo);
 	printf("Descricao: %-53s Unidade: %-3s\n", estoque[chave].descricao, estoque[chave].unidade);
-	printf("Fornecedor: %59s\n", estoque[chave].fornecedor);
-	printf("Preço de Compra: R$ %-8.2f  Preço de Venda: R$ %-8.2f  Lucro Mínimo: %i%%\n", estoque[chave].pr_compra, estoque[chave].pr_venda, estoque[chave].lucro);
-	printf("Quantidade em Estoque: %-25f Quantidade Mínima: %-25f\n", estoque[chave].quantidade, estoque[chave].quantidade);
+	printf("Fornecedor: %s\n", estoque[chave].fornecedor);
+	printf("Preço de Compra: R$ %-7.2f  Preço de Venda: R$ %-7.2f   Lucro Mínimo: %i%%\n", estoque[chave].pr_compra, estoque[chave].pr_venda, estoque[chave].lucro);
+	printf("Quantidade em Estoque: %-25.2f   Quantidade Mínima: %-25.2f\n", estoque[chave].quantidadeParcial, estoque[chave].quantidade);
+	printf("----------------------------------------------------------------------------\n");
+	return;
+}
+
+
+void mostraLista(Tproduto estoque[], int chave){
+	printf("%-7ld %-52s R$ %-8.2f\n", estoque[chave].codigo, estoque[chave].descricao, estoque[chave].pr_venda);
+	printf("----------------------------------------------------------------------------\n");
+	return;
+}
+
+
+void mostraListaVenda(Tproduto estoque[], int chave){
+	printf("%-53s R$ %-7.2f %-2.2f %-3s\n", estoque[chave].descricao, estoque[chave].pr_venda, estoque[chave].quantidadeParcial, estoque[chave].unidade);
 	printf("----------------------------------------------------------------------------\n");
 	return;
 }
