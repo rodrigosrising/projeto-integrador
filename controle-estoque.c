@@ -12,7 +12,8 @@ typedef struct TProduto{
     long int codigo;
     int grupo, lucro;
     char descricao[41], unidade[3], fornecedor[41];
-    float pr_compra, pr_venda, quantidade, quantidadeParcial, estoque_min, custoTotal, receitaTotal, valorLucro;
+//    float pr_compra, pr_venda, quantidade, quantidadeParcial, estoque_min, custoTotal, custoInicial, receitaTotal, valorLucro;
+    float quantidade, quantidadeDisponivel, estoque_min, custoInicial, custoTemporario, receita, pr_compra, pr_venda, valorLucro;
     float vendidos;
 }Tproduto;
 
@@ -290,15 +291,18 @@ void cadastrar(Tproduto estoque[], int *tamanho){
 		}
 	}while(aux.pr_venda < 0);
 	
+	// float quantidade, quantidadeDisponivel, estoque_min, custoInicial, custoTemporario, receita, pr_compra, pr_venda;
 	{
-		aux.quantidadeParcial = aux.quantidade;
-		aux.receitaTotal = aux.pr_venda * aux.vendidos;
-		aux.custoTotal = aux.pr_compra * aux.quantidade;
-		aux.valorLucro = aux.receitaTotal - aux.custoTotal;
-	
-		aux.lucro = aux.valorLucro/aux.custoTotal * 100;
+		aux.quantidadeDisponivel = aux.quantidade;
+		aux.custoInicial = aux.pr_compra * aux.quantidade;
 		
-	printf("RT: %.2f     CT: %.2f     VL: %.2f     L: %i \n", aux.receitaTotal, aux.custoTotal, aux.valorLucro, aux.lucro);
+		aux.receita = 0;
+		aux.custoTemporario = aux.custoInicial;
+		aux.valorLucro = aux.receita - aux.custoTemporario;
+	
+		aux.lucro = aux.valorLucro/aux.custoTemporario * 100;
+		
+	printf("RT: %.2f     CT: %.2f     VL: %.2f     L: %i%% \n", aux.receita, aux.custoInicial, aux.valorLucro, aux.lucro);
 	}
 	
 	
@@ -572,6 +576,7 @@ void consultar(Tproduto estoque[], int *tamanho){
 void vender(Tproduto estoque[], int *tamanho){
 	
 	int pos, cod;
+	float qtdVendida, valorVenda;
 	char confirma='n';
 	Tproduto aux;
 	
@@ -584,29 +589,34 @@ void vender(Tproduto estoque[], int *tamanho){
 	
 	if(pos >= 0){
 		aux = estoque[pos];
-		mostraListaVenda(estoque, pos);
+//		mostraListaVenda(estoque, pos);
+		mostraFicha(estoque, pos);
 		
 		do{
 			printf("Quantos produtos deseja comprar? ");
-			scanf("%f", &aux.vendidos);
+			scanf("%f", &qtdVendida);
 			printf("\n");
 			fflush(stdin);
-			if(aux.vendidos > aux.quantidadeParcial){
+			if(qtdVendida > aux.quantidadeDisponivel){
 				printf("A quantidade informada é maior que nosso estoque.\n");
 			}
-			if(aux.vendidos <= 0){
+			if(qtdVendida <= 0){
 				printf("A quantidade informada não pode ser menor que 0.\n");
 			}
-		}while(aux.vendidos <= 0 || aux.vendidos > aux.quantidadeParcial);
-
-		printf("Itens: %.2f  Valor a pagar: R$ %.2f \n", aux.vendidos, (aux.vendidos * aux.pr_venda));
+		}while(qtdVendida <= 0 || qtdVendida > aux.quantidadeDisponivel);
 		
-		aux.quantidadeParcial = aux.quantidadeParcial - aux.vendidos;
-		aux.receitaTotal = aux.pr_venda * aux.vendidos;
-		aux.custoTotal = aux.pr_compra * aux.quantidadeParcial;
-		aux.valorLucro = aux.receitaTotal - aux.custoTotal;
-		aux.lucro = aux.valorLucro/aux.custoTotal * 100;
-		printf("RT: %.2f     CT: %.2f     VL: %.2f     L: %i \n", aux.receitaTotal, aux.custoTotal, aux.valorLucro, aux.lucro);
+		valorVenda = qtdVendida * aux.pr_venda;
+		
+		printf("Itens: %.2f  Valor a pagar: R$ %.2f \n", qtdVendida, valorVenda);
+		
+		aux.quantidadeDisponivel = aux.quantidadeDisponivel - qtdVendida; // atualiza a quantidade descontando os itens vendidos sem interferir na quantidade comprada inicialmente.
+		aux.custoTemporario = aux.custoTemporario - valorVenda;		
+		aux.valorLucro = aux.receita - aux.custoInicial + valorVenda;
+		aux.receita = aux.receita + valorVenda;
+		aux.lucro = aux.valorLucro/aux.custoInicial * 100;
+		
+		printf("RT: %.2f     CT: %.2f     VL: %.2f     L: %i%% \n", aux.receita, aux.custoInicial, aux.valorLucro, aux.lucro);
+		// float quantidade, quantidadeDisponivel, estoque_min, custoInicial, custoTemporario, receita, pr_compra, pr_venda;
 		
 		{
 			int validaCadastro;
@@ -639,24 +649,13 @@ void relatorio(Tproduto estoque[], int *tamanho){
 	system("cls");
 }
 
-//int calculaMargemLucro(float pr_venda, float vendidos, float pr_compra, float quantidade){
-//	float receitaTotal = pr_venda * vendidos;
-//	float custoTotal = pr_compra * quantidade;
-//	float valorLucro = receitaTotal - custoTotal;
-//	
-//	int lucro = valorLucro/custoTotal * 100;
-//	
-//	// return;
-//	return lucro;
-//}
-
 
 void mostraFicha(Tproduto estoque[], int chave){
 	printf("Código: %-59ld Grupo: %-3i\n", estoque[chave].codigo, estoque[chave].grupo);
 	printf("Descricao: %-53s Unidade: %-3s\n", estoque[chave].descricao, estoque[chave].unidade);
 	printf("Fornecedor: %s\n", estoque[chave].fornecedor);
 	printf("Preço de Compra: R$ %-7.2f  Preço de Venda: R$ %-7.2f   Lucro Mínimo: %i%%\n", estoque[chave].pr_compra, estoque[chave].pr_venda, estoque[chave].lucro);
-	printf("Quantidade em Estoque: %-25.2f   Quantidade Mínima: %-25.2f\n", estoque[chave].quantidadeParcial, estoque[chave].quantidade);
+	printf("Quantidade em Estoque: %-25.2f   Quantidade Mínima: %-25.2f\n", estoque[chave].quantidadeDisponivel, estoque[chave].quantidade);
 	printf("----------------------------------------------------------------------------\n");
 	return;
 }
@@ -670,7 +669,7 @@ void mostraLista(Tproduto estoque[], int chave){
 
 
 void mostraListaVenda(Tproduto estoque[], int chave){
-	printf("%-53s R$ %-7.2f %-2.2f %-3s\n", estoque[chave].descricao, estoque[chave].pr_venda, estoque[chave].quantidadeParcial, estoque[chave].unidade);
+	printf("%-53s R$ %-7.2f %-2.2f %-3s\n", estoque[chave].descricao, estoque[chave].pr_venda, estoque[chave].quantidadeDisponivel, estoque[chave].unidade);
 	printf("----------------------------------------------------------------------------\n");
 	return;
 }
