@@ -250,6 +250,17 @@ void cadastrar(Tproduto estoque[], int *tamanho){
 	}while(aux.unidade[0] == '\0');
 	
 	
+	// Estoque minimo
+	do{
+		printf("Estoque minimo-----------: ");
+		scanf("%f", &aux.estoque_min);
+		fflush(stdin);
+		if(aux.estoque_min < 0){
+			printf("A estoque minimo não pode ser negativo.\n");	
+		}
+	}while(aux.estoque_min < 0);
+	
+	
 	// Grupo do produto
 	do{
 		printf("Grupo:\n[1] refeição\n[2] bebidas\n[3] sobremesas\n");
@@ -302,7 +313,7 @@ void cadastrar(Tproduto estoque[], int *tamanho){
 	
 		aux.lucro = aux.valorLucro/aux.custoTemporario * 100;
 		
-	printf("RT: %.2f     CT: %.2f     VL: %.2f     L: %i%% \n", aux.receita, aux.custoInicial, aux.valorLucro, aux.lucro);
+//	printf("RT: %.2f     CT: %.2f     VL: %.2f     L: %i%% \n", aux.receita, aux.custoInicial, aux.valorLucro, aux.lucro);
 	}
 	
 	
@@ -322,6 +333,8 @@ void cadastrar(Tproduto estoque[], int *tamanho){
 
 
 //void atualizar(Tproduto estoque[], int *tamanho){
+//
+// Não atualizar os seguintes campos: preço de compra, quantidade, fornecedor
 //	
 //	Tproduto aux;
 //	
@@ -654,8 +667,8 @@ void mostraFicha(Tproduto estoque[], int chave){
 	printf("Código: %-59ld Grupo: %-3i\n", estoque[chave].codigo, estoque[chave].grupo);
 	printf("Descricao: %-53s Unidade: %-3s\n", estoque[chave].descricao, estoque[chave].unidade);
 	printf("Fornecedor: %s\n", estoque[chave].fornecedor);
-	printf("Preço de Compra: R$ %-7.2f  Preço de Venda: R$ %-7.2f   Lucro Mínimo: %i%%\n", estoque[chave].pr_compra, estoque[chave].pr_venda, estoque[chave].lucro);
-	printf("Quantidade em Estoque: %-25.2f   Quantidade Mínima: %-25.2f\n", estoque[chave].quantidadeDisponivel, estoque[chave].quantidade);
+	printf("Preço de Compra: R$ %-7.2f  Preço de Venda: R$ %-6.2f   Lucro Mínimo: %i%%\n", estoque[chave].pr_compra, estoque[chave].pr_venda, estoque[chave].lucro);
+	printf("Quantidade em Estoque: %-26.2f   Quantidade Mínima: %-25.2f\n", estoque[chave].quantidadeDisponivel, estoque[chave].estoque_min);
 	printf("----------------------------------------------------------------------------\n");
 	return;
 }
