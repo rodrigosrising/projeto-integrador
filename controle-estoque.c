@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 #include <locale.h>
 
 
@@ -12,7 +13,6 @@ typedef struct TProduto{
     long int codigo;
     int grupo, lucro;
     char descricao[41], unidade[3], fornecedor[41];
-//    float pr_compra, pr_venda, quantidade, quantidadeParcial, estoque_min, custoTotal, custoInicial, receitaTotal, valorLucro;
     float quantidade, quantidadeDisponivel, estoque_min, custoInicial, custoTemporario, receita, pr_compra, pr_venda, valorLucro;
     float vendidos;
 }Tproduto;
@@ -36,7 +36,6 @@ void consultar(Tproduto estoque[], int *tamanho); 	//faz a busca pelo produto
 
 //Relatorios
 void relatorio(Tproduto estoque[], int *tamanho);
-
 void vender(Tproduto estoque[], int *tamanho);
 
 
@@ -51,14 +50,18 @@ int main(){
     int tamanho=0, opcao, opc;
     char nome[20];
     leitura(estoque, &tamanho);// abre o arquivo da base de dados
+    
     do{
-        printf ("\n 1 - CADASTRAR\n");
-        printf (" 2 - ATUALIZAR\n");
-        printf (" 3 - EXCLUIR\n");
-        printf (" 4 - CONSULTAR\n");
-    	printf (" 5 - VENDER\n");
-    	printf (" 6 - RELATORIO\n");
-        printf (" 0 - SAIR\n");
+    	printf ("------------------------------------------------------------\n");
+		printf ("                    CONTROLE DE ESTOQUE                     \n");
+		printf ("------------------------------------------------------------\n\n");
+        printf ("1 - CADASTRAR\n");
+        printf ("2 - ATUALIZAR\n");
+        printf ("3 - EXCLUIR\n");
+        printf ("4 - CONSULTAR\n");
+    	printf ("5 - VENDER\n");
+    	printf ("6 - RELATORIO\n");
+        printf ("0 - SAIR\n");
         printf ("\nESCOLHA A OPCAO DESEJADA:\n");
         scanf ("%d",&opcao);
         system("cls");
@@ -69,8 +72,8 @@ int main(){
 				break;
 			}        	
             case 2:{
-//            	atualizar(estoque, &tamanho);
-//            	gravacao(estoque, tamanho);
+            	atualizar(estoque, &tamanho);
+            	gravacao(estoque, tamanho);
 				break;
 			}
 			case 3:{
@@ -199,6 +202,10 @@ void cadastrar(Tproduto estoque[], int *tamanho){
 		return;
 	}
 	
+	printf ("----------------------------------------------------------------------------\n");
+	printf ("                             CADASTRAR PRODUTO                              \n");
+	printf ("----------------------------------------------------------------------------\n\n");
+	
 	// solicita o codigo do produto
 	do{
 		printf("Código do produto--------------------------: ");
@@ -213,7 +220,10 @@ void cadastrar(Tproduto estoque[], int *tamanho){
 	
 	// Verifica se já existe um produto com o mesmo código
 	if(pesquisa(estoque, aux.codigo, tamanho) > 0){
-		printf("\nPRODUTO JA EXISTE\n");
+		system("cls");
+		printf("\n PRODUTO JA EXISTE\n");
+		system("pause");
+		system("cls");
 		return;	
 	}
 	
@@ -268,7 +278,7 @@ void cadastrar(Tproduto estoque[], int *tamanho){
 		scanf("%i", &aux.grupo);
 		fflush(stdin);
 		if(aux.grupo != 1 && aux.grupo != 2 && aux.grupo != 3)
-			printf("Digite uma categoria válida\n");
+			printf(" Digite uma categoria válida\n");
 	}while(aux.grupo != 1 && aux.grupo != 2 && aux.grupo != 3);
 	
 	// Fornecedor do produto
@@ -318,7 +328,7 @@ void cadastrar(Tproduto estoque[], int *tamanho){
 	
 	
 	int validaCadastro;
-	printf("As informações estão corretas?\n 1 - Sim   0 - Não \n");
+	printf(" As informações estão corretas?\n 1 - Sim   0 - Não \n");
 	scanf("%i", &validaCadastro);
 	fflush(stdin);
 	if(validaCadastro == 1){
@@ -326,225 +336,185 @@ void cadastrar(Tproduto estoque[], int *tamanho){
 		estoque[*tamanho] = aux;
 		(*tamanho) ++;
 		ordenado = 0;
-		
-		printf("\nCadastro Efetuado com sucesso!\n\n");
+		system("cls");
+		printf("\n Cadastro Efetuado com sucesso!\n\n");
+		system("pause");
+		system("cls");
 	}
 }
 
+void atualizar(Tproduto estoque[], int *tamanho){
 
-//void atualizar(Tproduto estoque[], int *tamanho){
-//
-// Não atualizar os seguintes campos: preço de compra, quantidade, fornecedor
-//	
-//	Tproduto aux;
-//	
-//	int pos, cod, opc;
-//	char correto = "N";
-//	
-//	printf("Código: ");
-//	scanf("%i", &cod);
-//	fflush(stdin);
-//	
-//	pos = pesquisabinaria(estoque, cod, *tamanho);
-//	if(pos >= 0){
-//		aux = estoque[pos];
-//		mostra(estoque, pos);
-//		
-//		printf("O que deseja alterar? \n");
-//		printf("1 - Descrição do produto: \n");
-//		printf("2 - Descrição do produto: \n");
-//		printf("3 - Quantidade do produto: \n");
-//		printf("4 - Grupo do produto: \n");
-//		printf("5 - Valor de compra do produto: \n");
-//		printf("0 - Sair: \n");
-//		scanf("%i", &opc);
-//		fflush(stdin);
-//		
-//		switch(opc){
-//		case 1:
-//			printf("\nDigite o novo nome do produto: ");
-//			
-//			gets(&aux.nome);
-//			fflush(stdin);
-//			
-//			{
-//				int validaCadastro;
-//				printf("Confirmar alteração?\n 1 - Sim   0 - Não \n");
-//				scanf("%i", &validaCadastro);
-//				fflush(stdin);
-//				if(validaCadastro == 1){
-//					
-//					estoque[*tamanho] = aux;
-//					(*tamanho) ++;
-//					ordenado = 0;
-//					
-//					printf("\nNome atualizado!\n\n");
-//				}
-//			}
-//			
-//			break;
-//		case 2:
-//			printf("\nDigite a nova descrição do produto: ");
-//			gets(aux.desc);
-//			fflush(stdin);
-//			
-//			{
-//				int validaCadastro;
-//				printf("Confirmar alteração?\n 1 - Sim   0 - Não \n");
-//				scanf("%i", &validaCadastro);
-//				fflush(stdin);
-//				if(validaCadastro == 1){
-//					
-//					estoque[*tamanho] = aux;
-//					(*tamanho) ++;
-//					ordenado = 0;
-//					
-//					printf("\nDescrição atualizada!\n\n");
-//				}
-//			}
-//			break;
-//		case 3:
-//			do{
-//				printf("Quantidade de produto em estoque-----------: ");
-//				scanf("%i", &aux.quantidade);
-//				fflush(stdin);
-//				if(aux.quantidade < 0){
-//					printf("A quantidade não pode ser negativa.\n");	
-//				}
-//			}while(aux.quantidade < 0);
-//			
-//			{
-//				int validaCadastro;
-//				printf("Confirmar alteração?\n 1 - Sim   0 - Não \n");
-//				scanf("%i", &validaCadastro);
-//				fflush(stdin);
-//				if(validaCadastro == 1){
-//					
-//					estoque[*tamanho] = aux;
-//					(*tamanho) ++;
-//					ordenado = 0;
-//					
-//					printf("\nQuantidade atualizada!\n\n");
-//				}
-//			}
-//			
-//			break;
-//		case 4:
-//			printf("\nDigite o grupo do produto: ");
-//			scanf("%i", &aux.grupo);
-//			fflush(stdin);
-//			
-//			{
-//				int validaCadastro;
-//				printf("Confirmar alteração?\n 1 - Sim   0 - Não \n");
-//				scanf("%i", &validaCadastro);
-//				fflush(stdin);
-//				if(validaCadastro == 1){
-//					
-//					estoque[*tamanho] = aux;
-//					(*tamanho) ++;
-//					ordenado = 0;
-//					
-//					printf("\nGrupo atualizado!\n\n");
-//				}
-//			}
-//			break;
-//		case 5:
-//			do{
-//				printf("Preco de compra do produto-----------------: ");
-//				scanf("%f", &aux.v_compra);
-//				fflush(stdin);
-//				if(aux.v_compra < 0){
-//					printf("O preço de compra não pode ser negativo.\n");
-//				}
-//			}while(aux.v_compra < 0);
-//	
-//			aux.v_venda = aux.v_compra * 1.9;
-//			
-//			{
-//				int validaCadastro;
-//				printf("Confirmar alteração?\n 1 - Sim   0 - Não \n");
-//				scanf("%i", &validaCadastro);
-//				fflush(stdin);
-//				if(validaCadastro == 1){
-//					
-//					estoque[*tamanho] = aux;
-//					(*tamanho) ++;
-//					ordenado = 0;
-//					
-//					printf("\nPreço de compra atualizado!\n\n");
-//				}
-//			}
-//
-////			confirmacao(estoque, *tamanho, "Preço de compra atualizado");
-//			
-//			break;
-//		case 0:
-//			printf("Sair");
-//			break;
-//		default:
-//			printf("Opção Inválida");
-//			break; 
-//		}
-//	} else {
-//		printf("nao cadastrado");
-//	}
-//}
+ 	//Não atualizar os seguintes campos: preço de compra, quantidade, fornecedor
+ 	// descricao, unidade, estoque_min, pr_venda
+	
+	Tproduto aux;
+	
+	int pos, cod, opc;
+	int correto='n';
+	
+	printf ("----------------------------------------------------------------------------\n");
+	printf ("                                EDITAR PRODUTO                              \n");
+	printf ("----------------------------------------------------------------------------\n\n");
+	
+	printf("Código-------------------------: ");
+	scanf("%i", &cod);
+	fflush(stdin);
+	
+	pos = pesquisabinaria(estoque, cod, *tamanho);
+	if(pos >= 0){
+		aux = estoque[pos];
+		printf("\n");
+		mostraFicha(estoque, pos);
+		
+		printf("\nO que deseja alterar? \n");
+		printf("1 - Descrição do produto: \n");
+		printf("2 - Unidade do produto: \n");
+		printf("3 - Grupo do produto: \n");
+		printf("4 - Valor de venda do produto: \n");
+		printf("0 - Sair: \n");
+		scanf("%i", &opc);
+		fflush(stdin);
+		
+		switch(opc){
+		case 1:
+			// Descrição do produto
+			do{
+				printf("Digite o nova descrição------------------------: ");
+				gets(aux.descricao);
+				fflush(stdin);
+				if(aux.descricao[0] == '\0'){
+					printf("O campo descricao não pode ser vazio. \n");	
+				}
+			}while(aux.descricao[0] == '\0');
+						
+			break;
+		case 2:
+			// Unidade do produto
+			do{
+				printf("Unidade [KG, PC, UN, LT] -----------: ");
+				gets(aux.unidade);
+				fflush(stdin);
+				if(aux.unidade[0] == '\0'){
+					printf("O campo unidade não pode ser vazio. \n");	
+				}
+			}while(aux.unidade[0] == '\0');
+			
+			break;
+		case 3:
+			// Estoque minimo
+			do{
+				printf("Estoque minimo-----------: ");
+				scanf("%f", &aux.estoque_min);
+				fflush(stdin);
+				if(aux.estoque_min < 0){
+					printf("A estoque minimo não pode ser negativo.\n");	
+				}
+			}while(aux.estoque_min < 0);
+			
+			break;
+		case 4:
+			//Preço de venda do produto
+			do{
+				printf("Preco de venda do produto-----------------: ");
+				scanf("%f", &aux.pr_venda);
+				fflush(stdin);
+				if(aux.pr_venda < 0){
+					printf("O preço de venda não pode ser negativo.\n");
+				}
+			}while(aux.pr_venda < 0);
+			
+			break;
+		case 0:
+			printf("Sair");
+			
+			break;
+		default:
+			printf("Opção Inválida");
+			
+			break; 
+		}
+		printf ("Os dados estao corretos?(S/N)");
+		correto=getchar();
+		fflush(stdin);
+		
+		printf("APERTE ENTER PARA VOLTAR AO MENU");
+		fflush(stdin);
+		system("cls");
+		if (correto=='s'||correto=='S'){
+			estoque[pos] = aux; 
+		}
+	} else {
+		printf("nao cadastrado");
+	}
+}
 	
 void excluir (Tproduto estoque[], int *tamanho){
-     if(*tamanho==0){
-        printf("\nREGISTRO VAZIO!\n\n");
-        return;
-     }
-     int posicao, i, codigo;
+	if(*tamanho==0){
+		printf("\nREGISTRO VAZIO!\n\n");
+		return;
+	}
+	int posicao, i, codigo;
+	char confirma='n';
+	
+	printf ("----------------------------------------------------------------------------\n");
+	printf ("                               EXCLUIR PRODUTO                              \n");
+	printf ("----------------------------------------------------------------------------\n\n");
+
+	printf("Codigo a ser excluido......: s");
+	scanf("%d", &codigo);
+	fflush(stdin);
+	posicao=pesquisabinaria(estoque, codigo, *tamanho);
      
-	 char confirma='n';
-     printf("Codigo a ser excluido......:");
-	 scanf("%d", &codigo);
-	 fflush(stdin);
-     posicao=pesquisabinaria(estoque, codigo, *tamanho);
-     
-     if (posicao>=0) {//encontrou registro
-            mostraLista(estoque, posicao);
-            printf("Confirma a exclusao do registro desse produto? (S/N) ");
-			fflush(stdin);
-            confirma=getchar(); fflush(stdin);
-            if (confirma == 's' || confirma == 'S'){
-                for (i=posicao;i<(*tamanho)-1;i++) // copia os dados do proximo registro para o anterior
-                    estoque[i]=estoque[i+1];
-            (*tamanho)--;
-        	printf("REGISTRO REMOVIDO!\n\n");
-            }else
-                printf("\n O REGRISTRO NAO FOI EXCLUIDO!\n\n");
-     }else
-         printf("O REGRISTRO NAO FOI LOCALIZADO!\n\n");
-         printf("APERTE ENTER PARA VOLTAR AO MENU");
-         getchar();
-         system("cls");
-         return;
+	if (posicao>=0) {//encontrou registro
+	    mostraFicha(estoque, posicao);
+	    printf("Confirma a exclusao do registro desse produto? (S/N) ");
+		fflush(stdin);
+	    confirma=getchar(); fflush(stdin);
+	    if (confirma == 's' || confirma == 'S'){
+	        for (i=posicao;i<(*tamanho)-1;i++){
+				estoque[i]=estoque[i+1];
+	    		(*tamanho)--;
+			} // copia os dados do proximo registro para o anterior     
+			printf("REGISTRO REMOVIDO!\n\n");
+	    }else{	
+	        printf("\n O REGRISTRO NAO FOI EXCLUIDO!\n\n");
+		}
+	}else{
+		printf("O REGRISTRO NAO FOI LOCALIZADO!\n\n");
+		printf("APERTE ENTER PARA VOLTAR AO MENU");
+		getchar();
+		system("cls");
+		return;
+	}       
 }
 
 void consultar(Tproduto estoque[], int *tamanho){
 	
 	int pos, cod, opc;
 	
-	printf("Pesquisar produto: \n");
+	printf ("----------------------------------------------------------------------------\n");
+	printf ("                              PESQUISAR PRODUTO                             \n");
+	printf ("----------------------------------------------------------------------------\n\n");
+	
 	printf("1 - Pesquisar produto por código \n");
 	printf("2 - Pesquisar produtos por descrição \n");
 	printf("0 - Sair \n");
 	scanf("%i", &opc);
 	fflush(stdin);
-	
+	system("cls");
 	switch(opc){
 	case 1:
-					
+		printf ("----------------------------------------------------------------------------\n");
+		printf ("                            PESQUISAR POR CÓDIGO                            \n");
+		printf ("----------------------------------------------------------------------------\n\n");	
 		{
 			printf("Digite o código para pesquisa: ");
 			scanf("%i", &cod);
 			fflush(stdin);
-			
+			printf("\n");
 			pos = pesquisabinaria(estoque, cod, *tamanho);
-			if(pos >= 0){;				
+			if(pos >= 0){			
 				mostraFicha(estoque, pos);
 				system("pause");
 				system("cls");
@@ -557,19 +527,43 @@ void consultar(Tproduto estoque[], int *tamanho){
 		
 		break;
 	case 2:
+		printf ("----------------------------------------------------------------------------\n");
+		printf ("                           PESQUISAR POR DESCRIÇÃO                          \n");
+		printf ("----------------------------------------------------------------------------\n\n");
 		
 		{
-			printf("Digite o código para pesquisa: ");
-			scanf("%i", &cod);
-			fflush(stdin);
-			
 			pos = pesquisabinaria(estoque, cod, *tamanho);
-			if(pos >= 0){;				
-				mostraLista(estoque, pos);
+			char buscaDescricao[41];
+			bool buscaResultado = false;
+		
+			printf("Buscar por: ");
+			scanf("%s", &buscaDescricao);
+			fflush(stdin);
+			system("cls");
+			
+			printf ("----------------------------------------------------------------------------\n");
+			printf ("                           PESQUISAR POR DESCRIÇÃO                          \n");
+			printf ("----------------------------------------------------------------------------\n\n");
+			
+			for(pos = 0; pos < *tamanho; pos++){
+				if(strstr(estoque[pos].descricao, buscaDescricao)){
+					mostraFicha(estoque, pos);
+					buscaResultado = true;
+				}
+				if(pos-1 % 2 == 0){
+					system("pause");
+					system("cls");
+					printf ("----------------------------------------------------------------------------\n");
+					printf ("                           PESQUISAR POR DESCRIÇÃO                          \n");
+					printf ("----------------------------------------------------------------------------\n\n");
+				}
+			}	
+			
+			if(buscaResultado == false){
+				printf ("Sua busca por '%s' não encontrou nenhum produto.\n", buscaDescricao);
 				system("pause");
 				system("cls");
 			} else {
-				printf("Código não cadastrado");
 				system("pause");
 				system("cls");
 			}
@@ -593,6 +587,9 @@ void vender(Tproduto estoque[], int *tamanho){
 	char confirma='n';
 	Tproduto aux;
 	
+	printf ("----------------------------------------------------------------------------\n");
+	printf ("                                VENDER PRODUTO                              \n");
+	printf ("----------------------------------------------------------------------------\n\n");
 	
 	printf("Código: ");
 	scanf("%i", &cod);
@@ -602,11 +599,10 @@ void vender(Tproduto estoque[], int *tamanho){
 	
 	if(pos >= 0){
 		aux = estoque[pos];
-//		mostraListaVenda(estoque, pos);
 		mostraFicha(estoque, pos);
 		
 		do{
-			printf("Quantos produtos deseja comprar? ");
+			printf("Quantos produtos deseja vender? ");
 			scanf("%f", &qtdVendida);
 			printf("\n");
 			fflush(stdin);
@@ -637,9 +633,9 @@ void vender(Tproduto estoque[], int *tamanho){
 			scanf("%i", &validaCadastro);
 			fflush(stdin);
 			if(validaCadastro == 1){
-							
 				estoque[pos] = aux;
 				
+				system("cls");
 				printf("\nVenda realizada!\n\n");
 				system("pause");
 				system("cls");
@@ -655,8 +651,21 @@ void relatorio(Tproduto estoque[], int *tamanho){
 	int chave, pos, cod, opc;
 	pos = pesquisabinaria(estoque, cod, *tamanho);
 	
+	printf ("----------------------------------------------------------------------------\n");
+	printf ("                               RELATORIO GERAL                              \n");
+	printf ("----------------------------------------------------------------------------\n\n");
+	
+	printf("tamanho do array: %i \n", *tamanho);
+	
 	for(chave = 0; chave < *tamanho; chave++){
 		mostraFicha(estoque, chave);
+		if(chave-1 % 2 == 0){
+			system("pause");
+			system("cls");
+			printf ("----------------------------------------------------------------------------\n");
+			printf ("                               RELATORIO GERAL                              \n");
+			printf ("----------------------------------------------------------------------------\n\n");
+		}
 	}
 	system("pause");
 	system("cls");
