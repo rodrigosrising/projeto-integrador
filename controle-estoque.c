@@ -525,14 +525,16 @@ void consultar(Tproduto estoque[], int *tamanho){
 			printf("Digite o código para pesquisa: ");
 			scanf("%i", &cod);
 			fflush(stdin);
-			printf("\n");
+			system("cls");
+			alinhaTexto(65, "PESQUISAR POR CÓDIGO");
+//			printf("\n");
 			pos = pesquisabinaria(estoque, cod, *tamanho);
 			if(pos >= 0){			
 				mostraFicha(estoque, pos);
 				system("pause");
 				system("cls");
 			} else {
-				printf("Código não cadastrado");
+				printf("Código não cadastrado \n");
 				system("pause");
 				system("cls");
 			}
@@ -554,8 +556,7 @@ void consultar(Tproduto estoque[], int *tamanho){
 			system("cls");
 			
 			alinhaTexto(65, "PESQUISAR POR DESCRIÇÃO");
-//			printf("Buscar por: %s \n", buscaDescricao);
-			// printf("tamanho do array: %i \n", *tamanho); // Mostra o tamanho do array de produtos
+
 			int porPagina = 1;
 			for(index = 0; index < *tamanho; index++){
 				pesquisa = strstr(estoque[index].descricao, buscaDescricao);
@@ -572,16 +573,19 @@ void consultar(Tproduto estoque[], int *tamanho){
 					alinhaTexto(65, "PESQUISAR POR DESCRIÇÃO");
 					porPagina = 1;
 				}
-				
-			}
-			system("pause");
-			system("cls");	
+			}	
 			
 			if(buscaResultado == false){
 				printf ("Sua busca por '%s' não encontrou nenhum produto.\n", buscaDescricao);
 				system("pause");
 				system("cls");
-			} 
+				porPagina = 0;
+			}
+			//corrigir para não mostrar esse sistem pause se não retornar resultados
+			if(porPagina != 0){
+				system("pause");
+				system("cls");
+			}
 		}
 		
 		break;
@@ -633,7 +637,6 @@ void relatorio(Tproduto estoque[], int *tamanho){
 		{
 			alinhaTexto(65, "RELATÓRIO POR PREÇO");
 			
-			printf("\n");
 			printf("Código  Descrição                                                 Preço     \n");
 			printf("----------------------------------------------------------------------------\n");
 
@@ -909,11 +912,14 @@ void vender(Tproduto estoque[], int *tamanho){
 	printf("Código: ");
 	scanf("%i", &cod);
 	fflush(stdin);
+	system("cls");
+	alinhaTexto(70, "VENDER PRODUTO");
 	
 	pos = pesquisabinaria(estoque, cod, *tamanho);
-	
 	if(pos >= 0){
 		aux = estoque[pos];
+		printf("Descrição                                               Preço     Quantidade\n");
+		printf("----------------------------------------------------------------------------\n");
 		mostraListaVenda(estoque, pos);
 		
 		do{
@@ -971,25 +977,25 @@ void alinhaTexto(int largura, char titulo[]){
 
 // Lista de produtos em formato de ficha
 void mostraFicha(Tproduto estoque[], int chave){
-	printf("Código: %-59ld Grupo: %-3i\n", estoque[chave].codigo, estoque[chave].grupo);
-	printf("Descricao: %-53s Unidade: %-3s\n", estoque[chave].descricao, estoque[chave].unidade);
+	printf("Código: %-57ld Grupo: %3i\n", estoque[chave].codigo, estoque[chave].grupo);
+	printf("Descricao: %-52s Unidade: %3s\n", estoque[chave].descricao, estoque[chave].unidade);
 	printf("Fornecedor: %s\n", estoque[chave].fornecedor);
-	printf("Preço de Compra: R$ %-7.2f  Preço de Venda: R$ %-6.2f   Lucro Mínimo: %i%%\n", estoque[chave].pr_compra, estoque[chave].pr_venda, estoque[chave].lucro);
-	printf("Quantidade em Estoque: %-26.2f   Quantidade Mínima: %-25.2f\n", estoque[chave].quantidadeDisponivel, estoque[chave].estoque_min);
+	printf("Preço de Compra: R$ %-7.2f  Preço de Venda: R$ %-5.2f   Lucro Mínimo: %5i%%\n", estoque[chave].pr_compra, estoque[chave].pr_venda, estoque[chave].lucro);
+	printf("Quantidade em Estoque: %-25.2f   Quantidade Mínima: %6.2f\n", estoque[chave].quantidadeDisponivel, estoque[chave].estoque_min);
 	printf("----------------------------------------------------------------------------\n");
 	return;
 }
 
 // Lista de produtos por preço
 void mostraLista(Tproduto estoque[], int chave){
-	printf("%-7ld %-58s R$ %-5.2f\n", estoque[chave].codigo, estoque[chave].descricao, estoque[chave].pr_venda);
+	printf("%-7ld %-58s R$ %6.2f\n", estoque[chave].codigo, estoque[chave].descricao, estoque[chave].pr_venda);
 	printf("----------------------------------------------------------------------------\n");
 	return;
 }
 
 // Usado em conjunto com a função de venda de produtos
 void mostraListaVenda(Tproduto estoque[], int chave){
-	printf("%-53s R$ %-7.2f %-2.2f %-3s\n", estoque[chave].descricao, estoque[chave].pr_venda, estoque[chave].quantidadeDisponivel, estoque[chave].unidade);
+	printf("%-55s R$ %-7.2f %.2f %2s\n", estoque[chave].descricao, estoque[chave].pr_venda, estoque[chave].quantidadeDisponivel, estoque[chave].unidade);
 	printf("----------------------------------------------------------------------------\n");
 	return;
 }
