@@ -473,7 +473,7 @@ void excluir (Tproduto estoque[], int *tamanho){
 	
 	alinhaTexto(65, "EXCLUIR PRODUTO");
 
-	printf("Codigo a ser excluido......: s");
+	printf("Codigo a ser excluido......: ");
 	scanf("%d", &codigo);
 	fflush(stdin);
 	posicao=pesquisabinaria(estoque, codigo, *tamanho);
@@ -482,7 +482,8 @@ void excluir (Tproduto estoque[], int *tamanho){
 	    mostraFicha(estoque, posicao);
 	    printf("Confirma a exclusao do registro desse produto? (S/N) ");
 		fflush(stdin);
-	    confirma=getchar(); fflush(stdin);
+	    confirma=getchar(); 
+		fflush(stdin);
 	    if (confirma == 's' || confirma == 'S'){
 	        for (i=posicao;i<(*tamanho)-1;i++){
 				estoque[i]=estoque[i+1];
@@ -494,7 +495,7 @@ void excluir (Tproduto estoque[], int *tamanho){
 		}
 	}else{
 		printf("O REGRISTRO NAO FOI LOCALIZADO!\n\n");
-		printf("APERTE ENTER PARA VOLTAR AO MENU");
+		printf("APERTE ENTER PARA VOLTAR AO MENU\n");
 		getchar();
 		system("cls");
 		return;
