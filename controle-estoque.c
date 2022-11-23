@@ -292,13 +292,15 @@ void cadastrar(Tproduto estoque[], int *tamanho){
 	
 	// Grupo do produto
 	do{
-		printf("Grupo:\n[1] refeição\n[2] bebidas\n[3] sobremesas\n");
+		printf("Grupo:\n[1] Ração\n[2] Medicamentos\n[3] Acessórios\n[4] Higiene\n[5] Brinquedos\n");
 		printf("Selecione uma Categoria--------------------: ");
 		scanf("%i", &aux.grupo);
 		fflush(stdin);
-		if(aux.grupo != 1 && aux.grupo != 2 && aux.grupo != 3)
+		if(aux.grupo != 1 && aux.grupo != 2 && aux.grupo != 3 && aux.grupo != 4 && aux.grupo != 5){
 			printf(" Digite uma categoria válida\n");
-	}while(aux.grupo != 1 && aux.grupo != 2 && aux.grupo != 3);
+		}
+			
+	}while(aux.grupo != 1 && aux.grupo != 2 && aux.grupo != 3 && aux.grupo != 4 && aux.grupo != 5);
 	
 	// Fornecedor do produto
 	do{
@@ -344,7 +346,6 @@ void cadastrar(Tproduto estoque[], int *tamanho){
 		
 	}
 	
-	
 	int validaCadastro;
 	printf(" As informações estão corretas?\n 1 - Sim   0 - Não \n");
 	scanf("%i", &validaCadastro);
@@ -360,9 +361,11 @@ void cadastrar(Tproduto estoque[], int *tamanho){
 		system("cls");
 	} else {
 		system("cls");
-//		printf("\n Cadastro Efetuado com sucesso!\n\n");
-//		system("pause");
-//		system("cls");
+		alinhaTexto(65, "CADASTRAR PRODUTO");
+		printf("Aperte ENTER para voltar ao menu\n");
+		getchar();
+		system("cls");
+		return;
 	}
 }
 
@@ -383,23 +386,28 @@ void atualizar(Tproduto estoque[], int *tamanho){
 	scanf("%i", &cod);
 	fflush(stdin);
 	
+	system("cls");
+	alinhaTexto(65, "EDITAR PRODUTO");
+	
 	pos = pesquisabinaria(estoque, cod, *tamanho);
 	if(pos >= 0){
 		aux = estoque[pos];
-		printf("\n");
 		mostraFicha(estoque, pos);
 		
 		printf("\nO que deseja alterar? \n");
 		printf("1 - Descrição do produto: \n");
 		printf("2 - Unidade do produto: \n");
 		printf("3 - Grupo do produto: \n");
+		printf("4 - Estoque minimo: \n");
 		printf("4 - Valor de venda do produto: \n");
-		printf("0 - Sair: \n");
+		printf("0 - Voltar ao menu\n");
 		scanf("%i", &opc);
 		fflush(stdin);
 		
 		switch(opc){
 		case 1:
+			system("cls");
+			alinhaTexto(65, "EDITAR PRODUTO");
 			// Descrição do produto
 			do{
 				printf("Digite o nova descrição------------------------: ");
@@ -412,6 +420,8 @@ void atualizar(Tproduto estoque[], int *tamanho){
 						
 			break;
 		case 2:
+			system("cls");
+			alinhaTexto(65, "EDITAR PRODUTO");
 			// Unidade do produto
 			do{
 				printf("Unidade [KG, PC, UN, LT] ----------------------: ");
@@ -425,6 +435,24 @@ void atualizar(Tproduto estoque[], int *tamanho){
 			
 			break;
 		case 3:
+			system("cls");
+			alinhaTexto(65, "EDITAR PRODUTO");
+			// Grupo do produto
+			do{
+				printf("Grupo:\n[1] Ração\n[2] Medicamentos\n[3] Acessórios\n[4] Higiene\n[5] Brinquedos\n");
+				printf("Selecione uma Categoria--------------------: ");
+				scanf("%i", &aux.grupo);
+				fflush(stdin);
+				if(aux.grupo != 1 && aux.grupo != 2 && aux.grupo != 3 && aux.grupo != 4 && aux.grupo != 5){
+					printf(" Digite uma categoria válida\n");
+				}
+					
+			}while(aux.grupo != 1 && aux.grupo != 2 && aux.grupo != 3 && aux.grupo != 4 && aux.grupo != 5);
+			
+			break;
+		case 4:
+			system("cls");
+			alinhaTexto(65, "EDITAR PRODUTO");
 			// Estoque minimo
 			do{
 				printf("Estoque minimo---------------------------------: ");
@@ -436,7 +464,10 @@ void atualizar(Tproduto estoque[], int *tamanho){
 			}while(aux.estoque_min < 0);
 			
 			break;
-		case 4:
+			
+		case 5:
+			system("cls");
+			alinhaTexto(65, "EDITAR PRODUTO");
 			//Preço de venda do produto
 			do{
 				printf("Preco de venda do produto----------------------: ");
@@ -449,7 +480,12 @@ void atualizar(Tproduto estoque[], int *tamanho){
 			
 			break;
 		case 0:
-			printf("Sair");
+			system("cls");
+			alinhaTexto(65, "EDITAR PRODUTO");
+			printf("Aperte ENTER para voltar ao menu\n");
+			getchar();
+			system("cls");
+			return;
 			
 			break;
 		default:
@@ -457,15 +493,29 @@ void atualizar(Tproduto estoque[], int *tamanho){
 			
 			break; 
 		}
-		printf ("Os dados estao corretos?(S/N)");
-		correto=getchar();
+//		printf ("Os dados estao corretos?(S/N)");
+//		correto=getchar();
+//		fflush(stdin);
+//		
+//		printf("APERTE ENTER PARA VOLTAR AO MENU");
+//		fflush(stdin);
+//		system("cls");
+//		if (correto=='s'||correto=='S'){
+//			estoque[pos] = aux; 
+//		}
+		int validaCadastro;
+		printf(" As informações estão corretas?\n 1 - Sim   0 - Não \n");
+		scanf("%i", &validaCadastro);
 		fflush(stdin);
-		
-		printf("APERTE ENTER PARA VOLTAR AO MENU");
-		fflush(stdin);
-		system("cls");
-		if (correto=='s'||correto=='S'){
-			estoque[pos] = aux; 
+		if(validaCadastro == 1){
+			estoque[pos] = aux;
+			
+			system("cls");
+			printf("\n Cadastro atualizado com sucesso!\n\n");
+			system("pause");
+			system("cls");
+		} else {
+			system("cls");
 		}
 	} else {
 		printf("nao cadastrado");
@@ -505,8 +555,10 @@ void excluir (Tproduto estoque[], int *tamanho){
 	        printf("\n O REGRISTRO NAO FOI EXCLUIDO!\n\n");
 		}
 	}else{
-		printf("O REGRISTRO NAO FOI LOCALIZADO!\n\n");
-		printf("APERTE ENTER PARA VOLTAR AO MENU\n");
+		system("cls");
+		alinhaTexto(65, "EXCLUIR PRODUTO");
+		printf("Registro não localizado!\n\n");
+		printf("Aperte ENTER para voltar ao menu\n");
 		getchar();
 		system("cls");
 		return;
@@ -522,7 +574,7 @@ void consultar(Tproduto estoque[], int *tamanho){
 	
 	printf("1 - Pesquisar produto por código \n");
 	printf("2 - Pesquisar produtos por descrição \n");
-	printf("0 - Sair \n");
+	printf("0 - Voltar ao menu\n");
 	scanf("%i", &opc);
 	fflush(stdin);
 	system("cls");
@@ -616,7 +668,7 @@ void relatorio(Tproduto estoque[], int *tamanho){
 	
 	printf("1 - Relatório geral\n");
 	printf("2 - Relatório por preços\n");
-	printf("0 - Sair \n");
+	printf("0 - Voltar ao menu\n");
 	scanf("%i", &opc);
 	fflush(stdin);
 	system("cls");
@@ -685,7 +737,7 @@ void relatorioEspecial(Tproduto estoque[], int *tamanho){
 	printf("3 - Produtos que estão sendo vendidos com prejuízo\n");
 	printf("4 - Produtos fornecidos por um fornecedor\n");
 	printf("5 - Produtos de acordo com sua unidade de venda\n");
-	printf("0 - Sair \n");
+	printf("0 - Voltar ao menu\n");
 	scanf("%i", &opc);
 	fflush(stdin);
 	system("cls");
@@ -889,7 +941,7 @@ void movimentacao(Tproduto estoque[], int *tamanho){
 	alinhaTexto(75, "MOVIMENTACAO");
 	
 	printf("1 - Vender\n");
-	printf("0 - Sair \n");
+	printf("0 - Voltar ao menu\n");
 	scanf("%i", &opc);
 	fflush(stdin);
 	system("cls");
