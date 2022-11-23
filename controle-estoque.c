@@ -481,10 +481,6 @@ void atualizar(Tproduto estoque[], int *tamanho){
 			break;
 		case 0:
 			system("cls");
-			alinhaTexto(65, "EDITAR PRODUTO");
-			printf("Aperte ENTER para voltar ao menu\n");
-			getchar();
-			system("cls");
 			return;
 			
 			break;
@@ -541,19 +537,51 @@ void excluir (Tproduto estoque[], int *tamanho){
      
 	if (posicao>=0) {//encontrou registro
 	    mostraFicha(estoque, posicao);
-	    printf("Confirma a exclusao do registro desse produto? (S/N) ");
+//	    printf("Confirma a exclusao do registro desse produto? (S/N) ");
+//		fflush(stdin);
+//	    confirma=getchar(); 
+//		fflush(stdin);
+		
+		int validaCadastro;
+		printf(" As informações estão corretas?\n 1 - Sim   0 - Não \n");
+		scanf("%i", &validaCadastro);
 		fflush(stdin);
-	    confirma=getchar(); 
-		fflush(stdin);
-	    if (confirma == 's' || confirma == 'S'){
-	        for (i=posicao;i<(*tamanho)-1;i++){
+		if(validaCadastro == 1){
+			for (i=posicao;i<(*tamanho)-1;i++){
 				estoque[i]=estoque[i+1];
 	    		(*tamanho)--;
-			} // copia os dados do proximo registro para o anterior     
+			} // copia os dados do proximo registro para o anterior  
 			printf("REGISTRO REMOVIDO!\n\n");
-	    }else{	
-	        printf("\n O REGRISTRO NAO FOI EXCLUIDO!\n\n");
+			system("cls");
+			printf("Cadastro atualizado com sucesso!\n\n");
+			system("pause");
+			system("cls");
+		} else {
+			system("cls");
+			alinhaTexto(65, "EXCLUIR PRODUTO");
+	        printf("O registro não foi excluido!\n\n");
+	        printf("Aperte ENTER para voltar ao menu\n");
+			getchar();
+			system("cls");
+			return;
 		}
+		
+		
+//	    if (confirma == 's' || confirma == 'S'){
+//	        for (i=posicao;i<(*tamanho)-1;i++){
+//				estoque[i]=estoque[i+1];
+//	    		(*tamanho)--;
+//			} // copia os dados do proximo registro para o anterior     
+//			printf("REGISTRO REMOVIDO!\n\n");
+//	    }else{	
+//	    	system("cls");
+//			alinhaTexto(65, "EXCLUIR PRODUTO");
+//	        printf("\n O registro não foi excluido!\n\n");
+//	        printf("Aperte ENTER para voltar ao menu\n");
+//			getchar();
+//			system("cls");
+//			return;
+//		}
 	}else{
 		system("cls");
 		alinhaTexto(65, "EXCLUIR PRODUTO");
@@ -650,7 +678,9 @@ void consultar(Tproduto estoque[], int *tamanho){
 		
 		break;
 	case 0:
-		printf("Sair");
+		system("cls");
+		return;
+		
 		break;
 	default:
 		printf("Opção Inválida\n");
@@ -717,7 +747,9 @@ void relatorio(Tproduto estoque[], int *tamanho){
 		}
 		break;
 	case 0:
-		printf("Sair");
+		system("cls");
+		return;
+		
 		break;
 	default:
 		printf("Opção Inválida\n");
@@ -820,7 +852,9 @@ void relatorioEspecial(Tproduto estoque[], int *tamanho){
 		break;
 		
 	case 0:
-		printf("Sair");
+		system("cls");
+		return;
+		
 		break;
 		
 	default:
@@ -961,7 +995,9 @@ void movimentacao(Tproduto estoque[], int *tamanho){
 		}
 		break;
 	case 0:
-		printf("Sair");
+		system("cls");
+		return;
+		
 		break;
 	default:
 		printf("Opção Inválida\n");
