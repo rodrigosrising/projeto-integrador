@@ -342,8 +342,7 @@ void cadastrar(Tproduto estoque[], int *tamanho){
 		aux.custoTemporario = aux.custoInicial;
 		aux.valorLucro = aux.receita - aux.custoTemporario;
 	
-		aux.lucro = aux.valorLucro/aux.custoTemporario * 100;
-		
+		aux.lucro = aux.valorLucro/aux.custoTemporario * 100;		
 	}
 	
 	int validaCadastro;
@@ -489,16 +488,6 @@ void atualizar(Tproduto estoque[], int *tamanho){
 			
 			break; 
 		}
-//		printf ("Os dados estao corretos?(S/N)");
-//		correto=getchar();
-//		fflush(stdin);
-//		
-//		printf("APERTE ENTER PARA VOLTAR AO MENU");
-//		fflush(stdin);
-//		system("cls");
-//		if (correto=='s'||correto=='S'){
-//			estoque[pos] = aux; 
-//		}
 		int validaCadastro;
 		printf(" As informações estão corretas?\n 1 - Sim   0 - Não \n");
 		scanf("%i", &validaCadastro);
@@ -507,6 +496,7 @@ void atualizar(Tproduto estoque[], int *tamanho){
 			estoque[pos] = aux;
 			
 			system("cls");
+			alinhaTexto(65, "EDITAR PRODUTO");
 			printf("\n Cadastro atualizado com sucesso!\n\n");
 			system("pause");
 			system("cls");
@@ -533,27 +523,26 @@ void excluir (Tproduto estoque[], int *tamanho){
 
 	scanf("%d", &codigo);
 	fflush(stdin);
+	
+	system("cls");
+	alinhaTexto(65, "EXCLUIR PRODUTO");
 	posicao=pesquisabinaria(estoque, codigo, *tamanho);
      
 	if (posicao>=0) {//encontrou registro
 	    mostraFicha(estoque, posicao);
-//	    printf("Confirma a exclusao do registro desse produto? (S/N) ");
-//		fflush(stdin);
-//	    confirma=getchar(); 
-//		fflush(stdin);
 		
 		int validaCadastro;
-		printf(" As informações estão corretas?\n 1 - Sim   0 - Não \n");
+		printf(" Deseja excluir esse produto?\n 1 - Sim   0 - Não \n");
 		scanf("%i", &validaCadastro);
 		fflush(stdin);
 		if(validaCadastro == 1){
 			for (i=posicao;i<(*tamanho)-1;i++){
 				estoque[i]=estoque[i+1];
 	    		(*tamanho)--;
-			} // copia os dados do proximo registro para o anterior  
-			printf("REGISTRO REMOVIDO!\n\n");
+			} // copia os dados do proximo registro para o anterior
 			system("cls");
-			printf("Cadastro atualizado com sucesso!\n\n");
+			alinhaTexto(65, "EXCLUIR PRODUTO"); // copia os dados do proximo registro para o anterior  
+			printf("Produto removido!\n\n");
 			system("pause");
 			system("cls");
 		} else {
@@ -566,22 +555,6 @@ void excluir (Tproduto estoque[], int *tamanho){
 			return;
 		}
 		
-		
-//	    if (confirma == 's' || confirma == 'S'){
-//	        for (i=posicao;i<(*tamanho)-1;i++){
-//				estoque[i]=estoque[i+1];
-//	    		(*tamanho)--;
-//			} // copia os dados do proximo registro para o anterior     
-//			printf("REGISTRO REMOVIDO!\n\n");
-//	    }else{	
-//	    	system("cls");
-//			alinhaTexto(65, "EXCLUIR PRODUTO");
-//	        printf("\n O registro não foi excluido!\n\n");
-//	        printf("Aperte ENTER para voltar ao menu\n");
-//			getchar();
-//			system("cls");
-//			return;
-//		}
 	}else{
 		system("cls");
 		alinhaTexto(65, "EXCLUIR PRODUTO");
@@ -615,7 +588,6 @@ void consultar(Tproduto estoque[], int *tamanho){
 			fflush(stdin);
 			system("cls");
 			alinhaTexto(65, "PESQUISAR POR CÓDIGO");
-//			printf("\n");
 			pos = pesquisabinaria(estoque, cod, *tamanho);
 			if(pos >= 0){			
 				mostraFicha(estoque, pos);
@@ -639,7 +611,6 @@ void consultar(Tproduto estoque[], int *tamanho){
 		
 			printf("Buscar por: ");
 			scanf("%s", &buscaDescricao);
-//			gets(buscaDescricao);
 			fflush(stdin);
 			system("cls");
 			
@@ -649,7 +620,6 @@ void consultar(Tproduto estoque[], int *tamanho){
 			for(index = 0; index < *tamanho; index++){
 				pesquisa = strstr(estoque[index].descricao, buscaDescricao);
 				if(pesquisa){
-//					printf("item: %i \n", porPagina);
 					buscaResultado = true;
 					mostraFicha(estoque, index);
 					porPagina++;
@@ -876,7 +846,6 @@ void produtosFornecedor(Tproduto estoque[], int *tamanho){
 	
 		printf("Buscar por: ");
 		scanf("%s", &buscaFornecedor);
-//			gets(buscaDescricao);
 		fflush(stdin);
 		system("cls");
 		
@@ -885,7 +854,6 @@ void produtosFornecedor(Tproduto estoque[], int *tamanho){
 		for(index = 0; index < *tamanho; index++){
 			pesquisa = strstr(estoque[index].fornecedor, buscaFornecedor);
 			if(pesquisa){
-//					printf("item: %i \n", porPagina);
 				buscaResultado = true;
 				mostraFicha(estoque, index);
 				porPagina++;
@@ -909,9 +877,7 @@ void produtosFornecedor(Tproduto estoque[], int *tamanho){
 		if(porPagina != 0){
 			system("pause");
 			system("cls");
-		}
-		
-		
+		}	
 	}
 }
 
@@ -938,7 +904,6 @@ void produtosUnidade(Tproduto estoque[], int *tamanho){
 		for(index = 0; index < *tamanho; index++){
 			pesquisa = strstr(estoque[index].unidade, uppercase(buscaUnidade));
 			if(pesquisa){
-//					printf("item: %i \n", porPagina);
 				buscaResultado = true;
 				mostraFicha(estoque, index);
 				porPagina++;
@@ -982,7 +947,6 @@ void movimentacao(Tproduto estoque[], int *tamanho){
 	switch(opc){
 	case 1:
 		{
-//			alinhaTexto(65, "VENDER PRODUTO");
 			vender(estoque, tamanho);
 			gravacao(estoque, *tamanho);
 		}
@@ -1206,9 +1170,6 @@ char* uppercase(char *uppertext){
 	char *texto = uppertext;
 	int i;
 	for (i = 0; texto[i]!='\0'; i++) {
-//	   if(texto[i] >= 'a' && texto[i] <= 'z') {
-//	      texto[i] = texto[i] -32;
-//	   }
 		texto[i] = toupper(texto[i]);
 	}
 	return texto;
