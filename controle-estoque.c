@@ -39,6 +39,7 @@ void relatorio(Tproduto estoque[], int *tamanho);
 void relatorioEspecial(Tproduto estoque[], int *tamanho);
 void movimentacao(Tproduto estoque[], int *tamanho);
 void vender(Tproduto estoque[], int *tamanho);
+void comprar(Tproduto estoque[], int *tamanho);
 void produtosFornecedor(Tproduto estoque[], int *tamanho);
 void produtosUnidade(Tproduto estoque[], int *tamanho);
 
@@ -46,6 +47,7 @@ void produtosUnidade(Tproduto estoque[], int *tamanho);
 void mostraFicha(Tproduto estoque[], int chave); 	//exibe os dados do produto em formato de ficha
 void mostraLista(Tproduto estoque[], int chave); 	//exibe os dados do produto em formato de lista
 void mostraListaVenda(Tproduto estoque[], int chave);
+void mostraListaCompra(Tproduto estoque[], int chave);
 
 int main(){
 	setlocale(LC_ALL,"");
@@ -581,7 +583,7 @@ void consultar(Tproduto estoque[], int *tamanho){
 				system("cls");
 				porPagina = 0;
 			}
-			//corrigir para não mostrar esse sistem pause se não retornar resultados
+			//corrige para não mostrar esse sistem pause se não retornar resultados
 			if(porPagina != 0){
 				system("pause");
 				system("cls");
@@ -802,17 +804,22 @@ void produtosFornecedor(Tproduto estoque[], int *tamanho){
 				system("cls");
 				alinhaTexto(30, "Produtos fornecidos por um fornecedor");
 				porPagina = 1;
-			}
-			
+			}	
 		}
-		system("pause");
-		system("cls");	
 		
 		if(buscaResultado == false){
 			printf ("Sua busca por '%s' não encontrou nenhum fornecedor.\n", buscaFornecedor);
 			system("pause");
 			system("cls");
-		} 
+			porPagina = 0;
+		}
+		//corrige para não mostrar esse sistem pause se não retornar resultados
+		if(porPagina != 0){
+			system("pause");
+			system("cls");
+		}
+		
+		
 	}
 }
 
@@ -853,14 +860,18 @@ void produtosUnidade(Tproduto estoque[], int *tamanho){
 			}
 			
 		}
-		system("pause");
-		system("cls");	
 		
 		if(buscaResultado == false){
 			printf ("Sua busca por '%s' não encontrou nenhum fornecedor.\n", buscaUnidade);
 			system("pause");
 			system("cls");
-		} 
+			porPagina = 0;
+		}
+		//corrige para não mostrar esse sistem pause se não retornar resultados
+		if(porPagina != 0){
+			system("pause");
+			system("cls");
+		}
 	}
 }
 
@@ -887,7 +898,8 @@ void movimentacao(Tproduto estoque[], int *tamanho){
 		break;
 	case 2:
 		{
-			// codigo aqui
+			comprar(estoque, tamanho);
+			gravacao(estoque, *tamanho);
 		}
 		break;
 	case 0:
@@ -965,6 +977,93 @@ void vender(Tproduto estoque[], int *tamanho){
 	}
 }
 
+
+// funcão responsável por realizar a compra de produtos
+void comprar(Tproduto estoque[], int *tamanho){
+	
+	int pos, cod;
+	float qtdCompra, valorCompra;
+	char confirma='n';
+	Tproduto aux;
+	
+	alinhaTexto(70, "COMPRAR PRODUTO");
+	
+	printf("Código: ");
+	scanf("%i", &cod);
+	fflush(stdin);
+	system("cls");
+	alinhaTexto(70, "COMPRAR PRODUTO");
+	
+	pos = pesquisabinaria(estoque, cod, *tamanho);
+	if(pos >= 0){
+		aux = estoque[pos];
+		mostraListaCompra(estoque, pos);
+		
+		// Fornecedor do produto
+		do{
+			printf("Fornecedor---------------------------------------: ");
+			gets(aux.fornecedor);
+			fflush(stdin);
+			if(aux.fornecedor[0] == '\0'){
+				printf("O campo fornecedor não pode ser vazio. \n");	
+			}
+		}while(aux.fornecedor[0] == '\0');
+		
+		//Preço de compra do produto
+		do{
+			printf("Preco de compra do produto-----------------: ");
+			scanf("%f", &aux.pr_compra);
+			fflush(stdin);
+			if(aux.pr_compra < 0){
+				printf("O preço de compra não pode ser negativo.\n");
+			}
+		}while(aux.pr_compra < 0);
+		
+		do{
+			printf("Quantos produtos deseja comprar? ");
+			scanf("%f", &qtdCompra);
+			printf("\n");
+			fflush(stdin);
+
+			if(qtdCompra <= 0){
+				printf("A quantidade informada não pode ser menor que 0.\n");
+			}
+			
+		}while(qtdCompra <= 0);
+		
+		aux.quantidadeDisponivel = aux.quantidadeDisponivel + qtdCompra;
+		aux.quantidade = aux.quantidade + qtdCompra;
+		
+		valorCompra = qtdCompra * aux.pr_compra;
+		
+		system("cls");
+		alinhaTexto(70, "COMPRAR PRODUTO");
+		
+		printf("Produto: %s\n", aux.descricao);
+		printf("Fornecedor: %s\n", aux.fornecedor);
+		printf("Quantidade: %-36.2f  Valor a pagar: R$ %6.2f \n", qtdCompra, valorCompra);
+		printf("Novo estoque: %.2f\n", aux.quantidadeDisponivel);
+		
+		{
+			int validaCadastro;
+			printf("Confirmar compra?\n 1 - Sim   0 - Não \n");
+			scanf("%i", &validaCadastro);
+			fflush(stdin);
+			if(validaCadastro == 1){
+				estoque[pos] = aux;
+				
+				system("cls");
+				printf("\nVenda realizada!\n\n");
+				system("pause");
+				system("cls");
+			}
+		}
+		
+	} else {
+		printf("nao cadastrado");
+	}
+}
+
 // Alinha o titulo das seçoes
 void alinhaTexto(int largura, char titulo[]){
     int length = sizeof(titulo) - 1;  // desconta o terminal '\0'
@@ -1000,14 +1099,23 @@ void mostraListaVenda(Tproduto estoque[], int chave){
 	return;
 }
 
+// Usado em conjunto com a função de compra de produtos
+void mostraListaCompra(Tproduto estoque[], int chave){
+	printf("Descrição: %s\n", estoque[chave].descricao);
+	printf("Fornecedor: %-51s Unidade: %3s\n", estoque[chave].fornecedor, estoque[chave].unidade);
+	printf("----------------------------------------------------------------------------\n");
+	return;
+}
+
 // Converte o texto digitado em caractéres maíusculos
 char* uppercase(char *uppertext){
 	char *texto = uppertext;
 	int i;
 	for (i = 0; texto[i]!='\0'; i++) {
-	   if(texto[i] >= 'a' && texto[i] <= 'z') {
-	      texto[i] = texto[i] -32;
-	   }
+//	   if(texto[i] >= 'a' && texto[i] <= 'z') {
+//	      texto[i] = texto[i] -32;
+//	   }
+		texto[i] = toupper(texto[i]);
 	}
 	return texto;
 }
