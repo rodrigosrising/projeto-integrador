@@ -247,7 +247,7 @@ void cadastrar(Tproduto estoque[], int *tamanho){
 	
 	// Descrição do produto
 	do{
-		printf("Descrição---------------------------------------: ");
+		printf("Descrição----------------------------------: ");
 		gets(aux.descricao);
 		fflush(stdin);
 		if(aux.descricao[0] == '\0'){
@@ -269,7 +269,7 @@ void cadastrar(Tproduto estoque[], int *tamanho){
 	
 	// Unidade do produto
 	do{
-		printf("Unidade [KG, PC, UN, LT] -----------: ");
+		printf("Unidade [KG, PC, UN, LT] ------------------: ");
 		uppercase(gets(aux.unidade));
 //		gets(aux.unidade);
 		fflush(stdin);
@@ -281,7 +281,7 @@ void cadastrar(Tproduto estoque[], int *tamanho){
 	
 	// Estoque minimo
 	do{
-		printf("Estoque minimo-----------: ");
+		printf("Estoque minimo-----------------------------: ");
 		scanf("%f", &aux.estoque_min);
 		fflush(stdin);
 		if(aux.estoque_min < 0){
@@ -302,7 +302,7 @@ void cadastrar(Tproduto estoque[], int *tamanho){
 	
 	// Fornecedor do produto
 	do{
-		printf("Fornecedor---------------------------------------: ");
+		printf("Fornecedor---------------------------------: ");
 		gets(aux.fornecedor);
 		fflush(stdin);
 		if(aux.fornecedor[0] == '\0'){
@@ -323,7 +323,7 @@ void cadastrar(Tproduto estoque[], int *tamanho){
 
 	//Preço de venda do produto
 	do{
-		printf("Preco de venda do produto-----------------: ");
+		printf("Preco de venda do produto------------------: ");
 		scanf("%f", &aux.pr_venda);
 		fflush(stdin);
 		if(aux.pr_venda < 0){
@@ -358,6 +358,11 @@ void cadastrar(Tproduto estoque[], int *tamanho){
 		printf("\n Cadastro Efetuado com sucesso!\n\n");
 		system("pause");
 		system("cls");
+	} else {
+		system("cls");
+//		printf("\n Cadastro Efetuado com sucesso!\n\n");
+//		system("pause");
+//		system("cls");
 	}
 }
 
@@ -374,7 +379,7 @@ void atualizar(Tproduto estoque[], int *tamanho){
 	
 	alinhaTexto(65, "EDITAR PRODUTO");
 	
-	printf("Código-------------------------: ");
+	printf("Código do produto--------------------------: ");
 	scanf("%i", &cod);
 	fflush(stdin);
 	
@@ -409,7 +414,7 @@ void atualizar(Tproduto estoque[], int *tamanho){
 		case 2:
 			// Unidade do produto
 			do{
-				printf("Unidade [KG, PC, UN, LT] -----------: ");
+				printf("Unidade [KG, PC, UN, LT] ----------------------: ");
 //				gets(aux.unidade);
 				uppercase(gets(aux.unidade));
 				fflush(stdin);
@@ -422,7 +427,7 @@ void atualizar(Tproduto estoque[], int *tamanho){
 		case 3:
 			// Estoque minimo
 			do{
-				printf("Estoque minimo-----------: ");
+				printf("Estoque minimo---------------------------------: ");
 				scanf("%f", &aux.estoque_min);
 				fflush(stdin);
 				if(aux.estoque_min < 0){
@@ -434,7 +439,7 @@ void atualizar(Tproduto estoque[], int *tamanho){
 		case 4:
 			//Preço de venda do produto
 			do{
-				printf("Preco de venda do produto-----------------: ");
+				printf("Preco de venda do produto----------------------: ");
 				scanf("%f", &aux.pr_venda);
 				fflush(stdin);
 				if(aux.pr_venda < 0){
@@ -478,7 +483,8 @@ void excluir (Tproduto estoque[], int *tamanho){
 	
 	alinhaTexto(65, "EXCLUIR PRODUTO");
 
-	printf("Codigo a ser excluido......: ");
+	printf("Código do produto a ser excluido ----------: ");
+
 	scanf("%d", &codigo);
 	fflush(stdin);
 	posicao=pesquisabinaria(estoque, codigo, *tamanho);
