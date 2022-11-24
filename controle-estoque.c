@@ -33,15 +33,21 @@ void atualizar(Tproduto estoque[], int *tamanho); 	//Altera os dados do produto
 void excluir (Tproduto estoque[], int *tamanho);	//Remove o produto selecionado
 void consultar(Tproduto estoque[], int *tamanho);	//faz a busca pelo produto
 
-
 //Relatorios
 void relatorio(Tproduto estoque[], int *tamanho);
 void relatorioEspecial(Tproduto estoque[], int *tamanho);
+
+//Relatorios Especiais
+void margemLucroMinima(Tproduto estoque[], int *tamanho);
+void estoqueAbaixoMinimo(Tproduto estoque[], int *tamanho);
+void produtosFornecedor(Tproduto estoque[], int *tamanho);
+void produtosUnidade(Tproduto estoque[], int *tamanho);
+void produtosComPrejuizo(Tproduto estoque[], int *tamanho);
+
+// Movimentação
 void movimentacao(Tproduto estoque[], int *tamanho);
 void vender(Tproduto estoque[], int *tamanho);
 void comprar(Tproduto estoque[], int *tamanho);
-void produtosFornecedor(Tproduto estoque[], int *tamanho);
-void produtosUnidade(Tproduto estoque[], int *tamanho);
 
 // Exibir dados
 void mostraFicha(Tproduto estoque[], int chave); 	//exibe os dados do produto em formato de ficha
@@ -113,7 +119,8 @@ int main(){
 				movimentacao(estoque, &tamanho);
 				break;
 			}	
-            case 0: 
+            case 0:
+            	alinhaTexto(66, "CONTROLE DE ESTOQUE");
 				printf("Obrigado por usar nosso sistema.\n");
 				system("pause");
 				exit(0);
@@ -148,6 +155,7 @@ void gravacao(Tproduto estoque[], int tamanho){
     int i;
     arquivo= fopen("estoque.dat", "w+b");	   /* abre e apaga o conteúdo do arquivo,binário */ 
   	if (!arquivo){
+  		alinhaTexto(66, "CONTROLE DE ESTOQUE");
   		printf("Erro ao abrir arquivo!");
   		return;
   	}
@@ -194,6 +202,7 @@ int pesquisa(Tproduto estoque[], int codigo, int *tamanho){
 
 int vazio(int tamanho){
      if(tamanho==0){
+     	alinhaTexto(66, "CONTROLE DE ESTOQUE");
         printf("\nREGISTRO VAZIO!\n");
         return 1;
      }
@@ -218,12 +227,12 @@ void cadastrar(Tproduto estoque[], int *tamanho){
 	aux.vendidos = 0;
 	//Verifica se o arquivo está cheio
 	if(*tamanho == MAX){
+		alinhaTexto(66, "CONTROLE DE ESTOQUE");
 		printf("Arquivo cheio! \n");
 		return;
 	}
 	
-	alinhaTexto(65, "CADASTRAR PRODUTO");
-	
+	alinhaTexto(65, "CADASTRAR PRODUTO");	
 	// solicita o codigo do produto
 	do{
 		printf("Código do produto--------------------------: ");
@@ -355,7 +364,8 @@ void cadastrar(Tproduto estoque[], int *tamanho){
 		(*tamanho) ++;
 		ordenado = 0;
 		system("cls");
-		printf("\n Cadastro Efetuado com sucesso!\n\n");
+		alinhaTexto(65, "CADASTRAR PRODUTO");
+		printf("Cadastro Efetuado com sucesso!\n\n");
 		system("pause");
 		system("cls");
 	} else {
@@ -484,7 +494,11 @@ void atualizar(Tproduto estoque[], int *tamanho){
 			
 			break;
 		default:
+			system("cls");
+			alinhaTexto(65, "EDITAR PRODUTO");
 			printf("Opção Inválida");
+			system("pause");
+			system("cls");
 			
 			break; 
 		}
@@ -504,7 +518,11 @@ void atualizar(Tproduto estoque[], int *tamanho){
 			system("cls");
 		}
 	} else {
-		printf("nao cadastrado");
+		system("cls");
+		alinhaTexto(65, "EDITAR PRODUTO");
+		printf("nao existem produtos com esse código\n");
+		system("pause");
+		system("cls");
 	}
 }
 
@@ -664,7 +682,7 @@ void relatorio(Tproduto estoque[], int *tamanho){
 	int chave, pos, cod, opc;
 	pos = pesquisabinaria(estoque, cod, *tamanho);
 	
-	alinhaTexto(65, "RELATÓRIOS");
+	alinhaTexto(74, "RELATÓRIOS");
 	
 	printf("1 - Relatório geral\n");
 	printf("2 - Relatório por preços\n");
@@ -745,72 +763,15 @@ void relatorioEspecial(Tproduto estoque[], int *tamanho){
 	system("cls");
 	switch(opc){
 	case 1:
-		{
-			alinhaTexto(38, "Produtos com margem de lucro abaixo da mínima");
-						
-			int porPagina = 1;
-			for(chave = 0; chave < *tamanho; chave++){
-				if(estoque[chave].lucro < 0){
-					mostraFicha(estoque, chave);
-					porPagina++;
-					if(porPagina > 2){
-						system("pause");
-						system("cls");
-						alinhaTexto(38, "Produtos com margem de lucro abaixo da mínima");
-						porPagina = 1;
-					}
-				}
-			}
-			system("pause");
-			system("cls");
-		}
-		
+		margemLucroMinima(estoque, tamanho);
 		break;
 		
 	case 2:
-		{
-			alinhaTexto(42, "Produtos com estoque abaixo do mínimo");
-						
-			int porPagina = 1;
-			for(chave = 0; chave < *tamanho; chave++){
-				if(estoque[chave].quantidadeDisponivel < estoque[chave].estoque_min){
-					mostraFicha(estoque, chave);
-					porPagina++;
-					if(porPagina > 2){
-						system("pause");
-						system("cls");
-						alinhaTexto(42, "Produtos com estoque abaixo do mínimo");
-						porPagina = 1;
-					}
-				}
-			}
-			system("pause");
-			system("cls");
-		}
-		
+		estoqueAbaixoMinimo(estoque, tamanho);
 		break;
 		
 	case 3:
-		{
-			alinhaTexto(38, "Produtos que estão sendo vendidos com prejuízo");
-						
-			int porPagina = 1;
-			for(chave = 0; chave < *tamanho; chave++){
-				if(estoque[chave].pr_venda < estoque[chave].pr_compra){
-					mostraFicha(estoque, chave);
-					porPagina++;
-					if(porPagina > 2){
-						system("pause");
-						system("cls");
-						alinhaTexto(38, "Produtos que estão sendo vendidos com prejuízo");
-						porPagina = 1;
-					}
-				}
-			}
-			system("pause");
-			system("cls");
-		}
-		
+		produtosComPrejuizo(estoque, tamanho);
 		break;
 		
 	case 4: 
@@ -828,9 +789,82 @@ void relatorioEspecial(Tproduto estoque[], int *tamanho){
 		break;
 		
 	default:
+		system("cls");
+		alinhaTexto(70, "RELATÓRIOS ESPECIAIS");
 		printf("Opção Inválida\n");
+		system("pause");
+		system("cls");
 		break; 
 	}
+}
+
+// Produtos com margem de lucro abaixo da mínima
+void margemLucroMinima(Tproduto estoque[], int *tamanho){
+	
+	int index, pos, cod;
+	alinhaTexto(38, "Produtos com margem de lucro abaixo da mínima");
+						
+	int porPagina = 1;
+	for(index = 0; index < *tamanho; index++){
+		if(estoque[index].lucro < 0){
+			mostraFicha(estoque, index);
+			porPagina++;
+			if(porPagina > 2){
+				system("pause");
+				system("cls");
+				alinhaTexto(38, "Produtos com margem de lucro abaixo da mínima");
+				porPagina = 1;
+			}
+		}
+	}
+	system("pause");
+	system("cls");
+}
+
+// Produtos com estoque abaixo do mínimo
+void estoqueAbaixoMinimo(Tproduto estoque[], int *tamanho){
+	
+	int index, pos, cod;
+	alinhaTexto(42, "Produtos com estoque abaixo do mínimo");
+						
+	int porPagina = 1;
+	for(index = 0; index < *tamanho; index++){
+		if(estoque[index].quantidadeDisponivel < estoque[index].estoque_min){
+			mostraFicha(estoque, index);
+			porPagina++;
+			if(porPagina > 2){
+				system("pause");
+				system("cls");
+				alinhaTexto(42, "Produtos com estoque abaixo do mínimo");
+				porPagina = 1;
+			}
+		}
+	}
+	system("pause");
+	system("cls");
+}
+
+// Produtos que estão sendo vendidos com prejuízo
+void produtosComPrejuizo(Tproduto estoque[], int *tamanho){
+	
+	int index, pos, cod;
+	alinhaTexto(38, "Produtos que estão sendo vendidos com prejuízo");
+						
+	int porPagina = 1;
+	for(index = 0; index < *tamanho; index++){
+		if(estoque[index].pr_venda < estoque[index].pr_compra){
+			mostraFicha(estoque, index);
+			porPagina++;
+			if(porPagina > 2){
+				system("pause");
+				system("cls");
+				alinhaTexto(38, "Produtos que estão sendo vendidos com prejuízo");
+				porPagina = 1;
+			}
+		}
+	}
+	system("pause");
+	system("cls");
 }
 
 // Produtos por fornecedor
@@ -932,7 +966,7 @@ void produtosUnidade(Tproduto estoque[], int *tamanho){
 	}
 }
 
-// Movimentação (vender produtos)
+// Movimentação (vender e comprar produtos)
 void movimentacao(Tproduto estoque[], int *tamanho){
 	int chave, pos, cod, opc;
 	pos = pesquisabinaria(estoque, cod, *tamanho);
@@ -1034,7 +1068,6 @@ void vender(Tproduto estoque[], int *tamanho){
 		printf("nao cadastrado");
 	}
 }
-
 
 // funcão responsável por realizar a compra de produtos
 void comprar(Tproduto estoque[], int *tamanho){
