@@ -1162,7 +1162,11 @@ void comprar(Tproduto estoque[], int *tamanho){
 		}
 		
 	} else {
-		printf("nao cadastrado");
+		system("cls");
+		alinhaTexto(80, "COMPRAR PRODUTO");
+		printf("nao cadastrado\n");
+		system("pause");
+		system("cls");
 	}
 }
 
