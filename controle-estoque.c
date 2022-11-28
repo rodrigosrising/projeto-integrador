@@ -623,6 +623,8 @@ void consultar(Tproduto estoque[], int *tamanho){
 				system("pause");
 				system("cls");
 			} else {
+				system("cls");
+				alinhaTexto(80, "PESQUISAR POR CÓDIGO");
 				printf("Código não cadastrado \n");
 				system("pause");
 				system("cls");
@@ -682,7 +684,11 @@ void consultar(Tproduto estoque[], int *tamanho){
 		
 		break;
 	default:
+		system("cls");
+		alinhaTexto(80, "PESQUISAR PRODUTO");
 		printf("Opção Inválida\n");
+		system("pause");
+		system("cls");
 		break; 
 	}
 		
@@ -751,7 +757,11 @@ void relatorio(Tproduto estoque[], int *tamanho){
 		
 		break;
 	default:
+		system("cls");
+		alinhaTexto(80, "RELATÓRIOS");
 		printf("Opção Inválida\n");
+		system("pause");
+		system("cls");
 		break; 
 	}
 }
@@ -964,7 +974,7 @@ void produtosUnidade(Tproduto estoque[], int *tamanho){
 		}
 		
 		if(buscaResultado == false){
-			printf ("Sua busca por '%s' não encontrou nenhum fornecedor.\n", buscaUnidade);
+			printf ("Sua busca por '%s' não encontrou nenhum resultado.\n", buscaUnidade);
 			system("pause");
 			system("cls");
 			porPagina = 0;
@@ -1009,7 +1019,11 @@ void movimentacao(Tproduto estoque[], int *tamanho){
 		
 		break;
 	default:
+		system("cls");
+		alinhaTexto(80, "MOVIMENTACAO");
 		printf("Opção Inválida\n");
+		system("pause");
+		system("cls");
 		break; 
 	}
 }
@@ -1076,7 +1090,11 @@ void vender(Tproduto estoque[], int *tamanho){
 		}
 		
 	} else {
-		printf("nao cadastrado");
+		system("cls");
+		alinhaTexto(80, "VENDER PRODUTO");
+		printf("nao cadastrado\n");
+		system("pause");
+		system("cls");
 	}
 }
 
@@ -1182,10 +1200,16 @@ void alinhaTexto(int largura, char titulo[]){
 
 // Lista de produtos em formato de ficha
 void mostraFicha(Tproduto estoque[], int chave){
+	
 	printf("Código: %-57ld Grupo: %3i\n", estoque[chave].codigo, estoque[chave].grupo);
 	printf("Descricao: %-52s Unidade: %3s\n", estoque[chave].descricao, estoque[chave].unidade);
 	printf("Fornecedor: %s\n", estoque[chave].fornecedor);
-	printf("Preço de Compra: R$ %-7.2f  Preço de Venda: R$ %-5.2f   Lucro Mínimo: %5i%%\n", estoque[chave].pr_compra, estoque[chave].pr_venda, estoque[chave].lucro);
+	
+	//Mostra a linha de preços e lucro com cores vermelha para lucros abaixo de 0% e verde para lucro 0% ou maiores
+	(estoque[chave].lucro < 0) ? 
+	printf("Preço de Compra: R$ %-7.2f  Preço de Venda: R$ %-5.2f   Lucro Mínimo: \033[1;31m%5i%%\033[0m\n", estoque[chave].pr_compra, estoque[chave].pr_venda, estoque[chave].lucro) :
+	printf("Preço de Compra: R$ %-7.2f  Preço de Venda: R$ %-5.2f   Lucro Mínimo: \033[1;32m%5i%%\033[0m\n", estoque[chave].pr_compra, estoque[chave].pr_venda, estoque[chave].lucro);	
+	
 	printf("Quantidade em Estoque: %-25.2f   Quantidade Mínima: %6.2f\n", estoque[chave].quantidadeDisponivel, estoque[chave].estoque_min);
 	printf("----------------------------------------------------------------------------\n");
 	return;
