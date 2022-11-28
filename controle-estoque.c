@@ -257,8 +257,8 @@ void cadastrar(Tproduto estoque[], int *tamanho){
 	// Descrição do produto
 	do{
 		printf("Descrição----------------------------------: ");
-//		gets(aux.descricao);
-		fgets(aux.descricao, 40, stdin);
+		gets(aux.descricao);
+		//fgets(aux.descricao, 40, stdin);
 		fflush(stdin);
 		if(aux.descricao[0] == '\0'){
 			printf("O campo descricao não pode ser vazio. \n");	
@@ -318,8 +318,8 @@ void cadastrar(Tproduto estoque[], int *tamanho){
 	// Fornecedor do produto
 	do{
 		printf("Fornecedor---------------------------------: ");
-		// gets(aux.fornecedor);
-		fgets(aux.fornecedor, 40, stdin);
+		gets(aux.fornecedor);
+		// fgets(aux.fornecedor, 40, stdin);
 		fflush(stdin);
 		if(aux.fornecedor[0] == '\0'){
 			printf("O campo fornecedor não pode ser vazio. \n");	
@@ -413,7 +413,7 @@ void atualizar(Tproduto estoque[], int *tamanho){
 		printf("2 - Unidade do produto: \n");
 		printf("3 - Grupo do produto: \n");
 		printf("4 - Estoque minimo: \n");
-		printf("4 - Valor de venda do produto: \n");
+		printf("5 - Valor de venda do produto: \n");
 		printf("0 - Voltar ao menu\n");
 		scanf("%i", &opc);
 		fflush(stdin);
@@ -425,8 +425,8 @@ void atualizar(Tproduto estoque[], int *tamanho){
 			// Descrição do produto
 			do{
 				printf("Digite o nova descrição------------------------: ");
-				// gets(aux.descricao);
-				fgets(aux.descricao, 40, stdin);
+				gets(aux.descricao);
+				// fgets(aux.descricao, 40, stdin);
 				fflush(stdin);
 				if(aux.descricao[0] == '\0'){
 					printf("O campo descricao não pode ser vazio. \n");	
@@ -439,7 +439,7 @@ void atualizar(Tproduto estoque[], int *tamanho){
 			alinhaTexto(80, "EDITAR PRODUTO");
 			// Unidade do produto
 			do{
-				printf("Unidade [KG, PC, UN, LT] ----------------------: ");
+				printf("Unidade [KG, PC, UN, LT, CX] ----------------------: ");
 //				gets(aux.unidade);
 				uppercase(gets(aux.unidade));
 				fflush(stdin);
@@ -522,7 +522,7 @@ void atualizar(Tproduto estoque[], int *tamanho){
 			
 			system("cls");
 			alinhaTexto(80, "EDITAR PRODUTO");
-			printf("\n Cadastro atualizado com sucesso!\n\n");
+			printf("Cadastro atualizado com sucesso!\n");
 			system("pause");
 			system("cls");
 		} else {
@@ -947,7 +947,7 @@ void produtosUnidade(Tproduto estoque[], int *tamanho){
 		char *pesquisa;
 		bool buscaResultado = false;
 	
-		printf("Buscar por [KG, PC, UN, LT]: ");
+		printf("Buscar por [KG, PC, UN, LT, CX]: ");
 		scanf("%s", &buscaUnidade);
 //			gets(buscaDescricao);
 		fflush(stdin);
@@ -1033,7 +1033,6 @@ void vender(Tproduto estoque[], int *tamanho){
 	
 	int pos, cod;
 	float qtdVendida, valorVenda;
-	char confirma='n';
 	Tproduto aux;
 	
 	alinhaTexto(80, "VENDER PRODUTO");
@@ -1104,7 +1103,6 @@ void comprar(Tproduto estoque[], int *tamanho){
 	
 	int pos, cod;
 	float qtdCompra, valorCompra;
-	char confirma='n';
 	Tproduto aux;
 	
 	alinhaTexto(80, "COMPRAR PRODUTO");
