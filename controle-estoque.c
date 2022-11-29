@@ -25,19 +25,26 @@ void ordena(Tproduto estoque[], int tamanho);	// ordena o cadastro dos produtos 
 int pesquisabinaria(Tproduto estoque[], int index, int tamanho);
 int vazio(int tamanho);	// função auxiliar para da pesquisa binária
 void alinhaTexto(int largura, char titulo[]); // alinha titulos
-char* uppercase(char *uppertext);
+char* uppercase(char *uppertext); // Deixa os caracteres maiusculos
 
 //CRUD
-void cadastrar(Tproduto estoque[], int *tamanho);	//faz o cadastro dos produtos
-void atualizar(Tproduto estoque[], int *tamanho); 	//Altera os dados do produto
-void excluir (Tproduto estoque[], int *tamanho);	//Remove o produto selecionado
-void consultar(Tproduto estoque[], int *tamanho);	//faz a busca pelo produto
+void cadastrar(Tproduto estoque[], int *tamanho);	// Faz o cadastro dos produtos
+void atualizar(Tproduto estoque[], int *tamanho); 	// Altera os dados do produto
+void excluir (Tproduto estoque[], int *tamanho);	// Remove o produto selecionado
+
+//Consulta de produtos
+void consultar(Tproduto estoque[], int *tamanho);	
+void pesquisaCodigo(Tproduto estoque[], int *tamanho);	// consulta por codigo
+void pesquisaDescricao(Tproduto estoque[], int *tamanho);	// consulta por descricao
 
 //Relatorios
 void relatorio(Tproduto estoque[], int *tamanho);
-void relatorioEspecial(Tproduto estoque[], int *tamanho);
+void relatorioGeral(Tproduto estoque[], int *tamanho);	// Relatório Geral
+void relatorioPreco(Tproduto estoque[], int *tamanho);	// Relatório por Preço
+
 
 //Relatorios Especiais
+void relatorioEspecial(Tproduto estoque[], int *tamanho);
 void margemLucroMinima(Tproduto estoque[], int *tamanho);
 void estoqueAbaixoMinimo(Tproduto estoque[], int *tamanho);
 void produtosFornecedor(Tproduto estoque[], int *tamanho);
@@ -239,11 +246,11 @@ void cadastrar(Tproduto estoque[], int *tamanho){
 		scanf("%ld", &aux.codigo);
 		fflush(stdin);
 		
-		if(aux.codigo < 0){
-			printf("O código não pode ser negativo.\n");
+		if(aux.codigo <= 0){
+			printf("O código não pode ser igual a 0 ou negativo.\n");
 		}	
 		
-	}while(aux.codigo < 0);
+	}while(aux.codigo <= 0);
 	
 	// Verifica se já existe um produto com o mesmo código
 	if(pesquisa(estoque, aux.codigo, tamanho) > 0){
@@ -598,7 +605,7 @@ void excluir (Tproduto estoque[], int *tamanho){
 // Consutar produtos (por código ou por texto)
 void consultar(Tproduto estoque[], int *tamanho){
 	
-	int index, pos, cod, opc;
+	int opc;
 	
 	alinhaTexto(80, "PESQUISAR PRODUTO");
 	
@@ -610,72 +617,11 @@ void consultar(Tproduto estoque[], int *tamanho){
 	system("cls");
 	switch(opc){
 	case 1:	
-		alinhaTexto(80, "PESQUISAR POR CÓDIGO");
-		{
-			printf("Digite o código para pesquisa: ");
-			scanf("%i", &cod);
-			fflush(stdin);
-			system("cls");
-			alinhaTexto(80, "PESQUISAR POR CÓDIGO");
-			pos = pesquisabinaria(estoque, cod, *tamanho);
-			if(pos >= 0){			
-				mostraFicha(estoque, pos);
-				system("pause");
-				system("cls");
-			} else {
-				system("cls");
-				alinhaTexto(80, "PESQUISAR POR CÓDIGO");
-				printf("Código não cadastrado \n");
-				system("pause");
-				system("cls");
-			}
-		}
+		pesquisaCodigo(estoque, tamanho);
 		
 		break;
 	case 2:
-		alinhaTexto(80, "PESQUISAR POR DESCRIÇÃO");
-		
-		{
-			char buscaDescricao[41];
-			char *pesquisa;
-			bool buscaResultado = false;
-		
-			printf("Buscar por: ");
-			scanf("%s", &buscaDescricao);
-			fflush(stdin);
-			system("cls");
-			
-			alinhaTexto(80, "PESQUISAR POR DESCRIÇÃO");
-
-			int porPagina = 1;
-			for(index = 0; index < *tamanho; index++){
-				pesquisa = strstr(estoque[index].descricao, buscaDescricao);
-				if(pesquisa){
-					buscaResultado = true;
-					mostraFicha(estoque, index);
-					porPagina++;
-				}
-				
-				if(porPagina > 2){
-					system("pause");
-					system("cls");
-					alinhaTexto(80, "PESQUISAR POR DESCRIÇÃO");
-					porPagina = 1;
-				}
-			}	
-			
-			if(buscaResultado == false){
-				printf ("Sua busca por '%s' não encontrou nenhum produto.\n", buscaDescricao);
-				system("pause");
-				system("cls");
-				porPagina = 0;
-			}
-			//corrige para não mostrar esse sistem pause se não retornar resultados
-			if(porPagina != 0){
-				system("pause");
-				system("cls");
-			}
-		}
+		pesquisaDescricao(estoque, tamanho);
 		
 		break;
 	case 0:
@@ -694,10 +640,84 @@ void consultar(Tproduto estoque[], int *tamanho){
 		
 }
 
+// consulta por codigo
+void pesquisaCodigo(Tproduto estoque[], int *tamanho){
+	
+	int index, pos, cod, opc;
+	
+	alinhaTexto(80, "PESQUISAR POR CÓDIGO");
+	printf("Digite o código para pesquisa: ");
+	scanf("%i", &cod);
+	fflush(stdin);
+	system("cls");
+	alinhaTexto(80, "PESQUISAR POR CÓDIGO");
+	pos = pesquisabinaria(estoque, cod, *tamanho);
+	if(pos >= 0){			
+		mostraFicha(estoque, pos);
+		system("pause");
+		system("cls");
+	} else {
+		system("cls");
+		alinhaTexto(80, "PESQUISAR POR CÓDIGO");
+		printf("Código não cadastrado \n");
+		system("pause");
+		system("cls");
+	}
+}
+
+// consulta por descricao
+void pesquisaDescricao(Tproduto estoque[], int *tamanho){
+	
+	int index, pos, cod, opc;
+	
+	alinhaTexto(80, "PESQUISAR POR DESCRIÇÃO");
+		
+	char buscaDescricao[41];
+	char *pesquisa;
+	bool buscaResultado = false;
+
+	printf("Buscar por: ");
+	scanf("%s", &buscaDescricao);
+	fflush(stdin);
+	system("cls");
+	
+	alinhaTexto(80, "PESQUISAR POR DESCRIÇÃO");
+
+	int porPagina = 1;
+	for(index = 0; index < *tamanho; index++){
+		pesquisa = strstr(estoque[index].descricao, buscaDescricao);
+		if(pesquisa){
+			buscaResultado = true;
+			mostraFicha(estoque, index);
+			porPagina++;
+		}
+		
+		if(porPagina > 2){
+			system("pause");
+			system("cls");
+			alinhaTexto(80, "PESQUISAR POR DESCRIÇÃO");
+			porPagina = 1;
+		}
+	}	
+	
+	if(buscaResultado == false){
+		printf ("Sua busca por '%s' não encontrou nenhum produto.\n", buscaDescricao);
+		system("pause");
+		system("cls");
+		porPagina = 0;
+	}
+	//corrige para não mostrar esse sistem pause se não retornar resultados
+	if(porPagina != 0){
+		system("pause");
+		system("cls");
+	}
+}
+
 // Relatórios (geral e por preço)
 void relatorio(Tproduto estoque[], int *tamanho){
-	int chave, pos, cod, opc;
-	pos = pesquisabinaria(estoque, cod, *tamanho);
+	
+	int opc;
+	// pos = pesquisabinaria(estoque, cod, *tamanho);
 	
 	alinhaTexto(80, "RELATÓRIOS");
 	
@@ -709,47 +729,12 @@ void relatorio(Tproduto estoque[], int *tamanho){
 	system("cls");
 	switch(opc){
 	case 1:
-		{
-			alinhaTexto(80, "RELATÓRIO GERAL");
-						
-			int porPagina = 1;
-			for(chave = 0; chave < *tamanho; chave++){
-				mostraFicha(estoque, chave);
-				porPagina++;
-				if(porPagina > 2){
-					system("pause");
-					system("cls");
-					alinhaTexto(80, "RELATÓRIO GERAL");
-					porPagina = 1;
-				}
-			}
-			system("pause");
-			system("cls");
-			}
+		relatorioGeral(estoque, tamanho);
 		
 		break;
 	case 2:
-		{
-			alinhaTexto(80, "RELATÓRIO POR PREÇO");
-			
-			printf("Código  Descrição                                                 Preço     \n");
-			printf("----------------------------------------------------------------------------\n");
-
-			int porPagina = 1;
-			for(chave = 0; chave < *tamanho; chave++){
-				mostraLista(estoque, chave);
-				
-				porPagina++;
-				if(porPagina > 15){
-					system("pause");
-					system("cls");
-					alinhaTexto(80, "RELATÓRIO POR PREÇO");
-					porPagina = 1;
-				}
-			}
-			system("pause");
-			system("cls");
-		}
+		relatorioPreco(estoque, tamanho);
+		
 		break;
 	case 0:
 		system("cls");
@@ -764,6 +749,56 @@ void relatorio(Tproduto estoque[], int *tamanho){
 		system("cls");
 		break; 
 	}
+}
+
+// Relatorio Geral
+void relatorioGeral(Tproduto estoque[], int *tamanho){
+	
+	int index, pos, cod, opc;
+	pos = pesquisabinaria(estoque, cod, *tamanho);
+
+	alinhaTexto(80, "RELATÓRIO GERAL");
+				
+	int porPagina = 1;
+	for(index = 0; index < *tamanho; index++){
+		mostraFicha(estoque, index);
+		porPagina++;
+		if(porPagina > 2){
+			system("pause");
+			system("cls");
+			alinhaTexto(80, "RELATÓRIO GERAL");
+			porPagina = 1;
+		}
+	}
+	system("pause");
+	system("cls");
+}
+
+// Relatorio por Preço
+void relatorioPreco(Tproduto estoque[], int *tamanho){
+	
+	int index, pos, cod, opc;
+	pos = pesquisabinaria(estoque, cod, *tamanho);
+	
+	alinhaTexto(80, "RELATÓRIO POR PREÇO");
+			
+	printf("Código  Descrição                                                 Preço     \n");
+	printf("----------------------------------------------------------------------------\n");
+
+	int porPagina = 1;
+	for(index = 0; index < *tamanho; index++){
+		mostraLista(estoque, index);
+		
+		porPagina++;
+		if(porPagina > 15){
+			system("pause");
+			system("cls");
+			alinhaTexto(80, "RELATÓRIO POR PREÇO");
+			porPagina = 1;
+		}
+	}
+	system("pause");
+	system("cls");
 }
 
 // Relatórios Especiais (Listar produtos com margem de lucro abaixo da mínima)
@@ -1215,7 +1250,13 @@ void mostraFicha(Tproduto estoque[], int index){
 	printf("Quantidade em Estoque: \033[1;31m%-25.2f\033[0m   Quantidade Mínima: %6.2f\n", estoque[index].quantidadeDisponivel, estoque[index].estoque_min):
 	(estoque[index].quantidadeDisponivel < estoque[index].estoque_min) ? 
 	printf("Quantidade em Estoque: \033[1;33m%-25.2f\033[0m   Quantidade Mínima: %6.2f\n", estoque[index].quantidadeDisponivel, estoque[index].estoque_min):
-	printf("Quantidade em Estoque: %-25.2f   Quantidade Mínima: %6.2f\n", estoque[index].quantidadeDisponivel, estoque[index].estoque_min);;	
+	printf("Quantidade em Estoque: %-25.2f   Quantidade Mínima: %6.2f\n", estoque[index].quantidadeDisponivel, estoque[index].estoque_min);
+	
+	//Mostra a linha de preços e lucro com cores vermelha para lucros abaixo de 0% e verde para lucro 0% ou maiores
+	(estoque[index].receita > estoque[index].custoInicial) ? 
+	printf("Investimento em R$: %-31.2f  Receita em R$: \033[1;32m%8.2f\033[0m\n", estoque[index].custoInicial, estoque[index].receita) :
+	printf("Investimento em R$: %-31.2f  Receita em R$: \033[1;31m%8.2f\033[0m\n", estoque[index].custoInicial, estoque[index].receita);
+		
 	
 	printf("----------------------------------------------------------------------------\n");
 	return;
