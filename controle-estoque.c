@@ -1030,6 +1030,7 @@ void movimentacao(Tproduto estoque[], int *tamanho){
 	alinhaTexto(80, "MOVIMENTACAO");
 	
 	printf("1 - Vender\n");
+	printf("2 - Comprar\n");
 	printf("0 - Voltar ao menu\n");
 	scanf("%i", &opc);
 	fflush(stdin);
@@ -1121,6 +1122,12 @@ void vender(Tproduto estoque[], int *tamanho){
 				printf("Venda realizada!\n");
 				system("pause");
 				system("cls");
+			} else {
+				system("cls");
+				alinhaTexto(80, "VENDER PRODUTO");
+				printf("Venda cancelada!\n");
+				system("pause");
+				system("cls");
 			}
 		}
 		
@@ -1209,6 +1216,12 @@ void comprar(Tproduto estoque[], int *tamanho){
 				system("cls");
 				alinhaTexto(80, "COMPRAR PRODUTO");
 				printf("Compra realizada!\n\n");
+				system("pause");
+				system("cls");
+			} else {
+				system("cls");
+				alinhaTexto(80, "COMPRAR PRODUTO");
+				printf("Compra cancelada!\n\n");
 				system("pause");
 				system("cls");
 			}
