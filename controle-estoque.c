@@ -210,7 +210,9 @@ int pesquisa(Tproduto estoque[], int codigo, int *tamanho){
 int vazio(int tamanho){
      if(tamanho==0){
      	alinhaTexto(80, "CONTROLE DE ESTOQUE");
-        printf("\nREGISTRO VAZIO!\n");
+        printf("REGISTRO VAZIO!\n");
+        system("pause");
+		system("cls");
         return 1;
      }
      return 0;
@@ -264,8 +266,7 @@ void cadastrar(Tproduto estoque[], int *tamanho){
 	// Descrição do produto
 	do{
 		printf("Descrição----------------------------------: ");
-		gets(aux.descricao);
-		//fgets(aux.descricao, 40, stdin);
+		uppercase(gets(aux.descricao));
 		fflush(stdin);
 		if(aux.descricao[0] == '\0'){
 			printf("O campo descricao não pode ser vazio. \n");	
@@ -288,7 +289,6 @@ void cadastrar(Tproduto estoque[], int *tamanho){
 	do{
 		printf("Unidade [KG, PC, UN, LT] ------------------: ");
 		uppercase(gets(aux.unidade));
-//		gets(aux.unidade);
 		fflush(stdin);
 		if(aux.unidade[0] == '\0'){
 			printf("O campo unidade não pode ser vazio. \n");	
@@ -325,8 +325,7 @@ void cadastrar(Tproduto estoque[], int *tamanho){
 	// Fornecedor do produto
 	do{
 		printf("Fornecedor---------------------------------: ");
-		gets(aux.fornecedor);
-		// fgets(aux.fornecedor, 40, stdin);
+		uppercase(gets(aux.fornecedor));
 		fflush(stdin);
 		if(aux.fornecedor[0] == '\0'){
 			printf("O campo fornecedor não pode ser vazio. \n");	
@@ -432,8 +431,7 @@ void atualizar(Tproduto estoque[], int *tamanho){
 			// Descrição do produto
 			do{
 				printf("Digite o nova descrição------------------------: ");
-				gets(aux.descricao);
-				// fgets(aux.descricao, 40, stdin);
+				uppercase(gets(aux.descricao));
 				fflush(stdin);
 				if(aux.descricao[0] == '\0'){
 					printf("O campo descricao não pode ser vazio. \n");	
@@ -685,7 +683,8 @@ void pesquisaDescricao(Tproduto estoque[], int *tamanho){
 
 	int porPagina = 1;
 	for(index = 0; index < *tamanho; index++){
-		pesquisa = strstr(estoque[index].descricao, buscaDescricao);
+		pesquisa = strstr(estoque[index].descricao, uppercase(buscaDescricao));
+	
 		if(pesquisa){
 			buscaResultado = true;
 			mostraFicha(estoque, index);
@@ -701,7 +700,7 @@ void pesquisaDescricao(Tproduto estoque[], int *tamanho){
 	}	
 	
 	if(buscaResultado == false){
-		printf ("Sua busca por '%s' não encontrou nenhum produto.\n", buscaDescricao);
+		printf ("Sua busca por '%s' não encontrou nenhum produto.\n", uppercase(buscaDescricao));
 		system("pause");
 		system("cls");
 		porPagina = 0;
@@ -942,7 +941,7 @@ void produtosFornecedor(Tproduto estoque[], int *tamanho){
 		alinhaTexto(80, "Produtos fornecidos por um fornecedor");
 		int porPagina = 1;
 		for(index = 0; index < *tamanho; index++){
-			pesquisa = strstr(estoque[index].fornecedor, buscaFornecedor);
+			pesquisa = strstr(estoque[index].fornecedor, uppercase(buscaFornecedor));
 			if(pesquisa){
 				buscaResultado = true;
 				mostraFicha(estoque, index);
@@ -958,7 +957,7 @@ void produtosFornecedor(Tproduto estoque[], int *tamanho){
 		}
 		
 		if(buscaResultado == false){
-			printf ("Sua busca por '%s' não encontrou nenhum fornecedor.\n", buscaFornecedor);
+			printf ("Sua busca por '%s' não encontrou nenhum fornecedor.\n", uppercase(buscaFornecedor));
 			system("pause");
 			system("cls");
 			porPagina = 0;
@@ -1009,7 +1008,7 @@ void produtosUnidade(Tproduto estoque[], int *tamanho){
 		}
 		
 		if(buscaResultado == false){
-			printf ("Sua busca por '%s' não encontrou nenhum resultado.\n", buscaUnidade);
+			printf ("Sua busca por '%s' não encontrou nenhum resultado.\n", uppercase(buscaUnidade));
 			system("pause");
 			system("cls");
 			porPagina = 0;
@@ -1255,8 +1254,8 @@ void mostraFicha(Tproduto estoque[], int index){
 	
 	//Mostra a linha de preços e lucro com cores vermelha para lucros abaixo de 0% e verde para lucro 0% ou maiores
 	(estoque[index].lucro > 0) ? 
-	printf("Preço de Compra: R$ %-7.2f  Preço de Venda: R$ %-5.2f   Lucro Mínimo: \033[1;32m%5i%%\033[0m\n", estoque[index].pr_compra, estoque[index].pr_venda, estoque[index].lucro):
-	printf("Preço de Compra: R$ %-7.2f  Preço de Venda: R$ %-5.2f   Lucro Mínimo: \033[1;31m%5i%%\033[0m\n", estoque[index].pr_compra, estoque[index].pr_venda, estoque[index].lucro);
+	printf("Preço Compra: R$ %-9.2f  Preço Venda: R$ %-9.2f   Lucro Mínimo: \033[1;32m%5i%%\033[0m\n", estoque[index].pr_compra, estoque[index].pr_venda, estoque[index].lucro):
+	printf("Preço Compra: R$ %-9.2f  Preço Venda: R$ %-9.2f   Lucro Mínimo: \033[1;31m%5i%%\033[0m\n", estoque[index].pr_compra, estoque[index].pr_venda, estoque[index].lucro);
 	
 	//Mostra o estoque em vermelho caso fique abaixo do estoque minimo
 	(estoque[index].quantidadeDisponivel == 0) ? 
@@ -1277,7 +1276,7 @@ void mostraFicha(Tproduto estoque[], int index){
 
 // Lista de produtos por preço
 void mostraLista(Tproduto estoque[], int index){
-	printf("%-7ld %-58s R$ %6.2f\n", estoque[index].codigo, estoque[index].descricao, estoque[index].pr_venda);
+	printf("%-7ld %-57s R$ %6.2f\n", estoque[index].codigo, estoque[index].descricao, estoque[index].pr_venda);
 	printf("----------------------------------------------------------------------------\n");
 	return;
 }
