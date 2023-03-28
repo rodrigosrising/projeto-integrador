@@ -24,6 +24,7 @@ int pesquisa(Tproduto estoque[], int codigo, int *tamanho);	// busca e retorna a
 void ordena(Tproduto estoque[], int tamanho);	// ordena o cadastro dos produtos por código
 int pesquisabinaria(Tproduto estoque[], int index, int tamanho);
 int vazio(int tamanho);	// função auxiliar para da pesquisa binária
+void camposCadastro(int largura, char titulo[]); // Formata campos do cadastro
 void alinhaTexto(int largura, char titulo[]); // alinha titulos
 char* uppercase(char *uppertext); // Deixa os caracteres maiusculos
 
@@ -244,7 +245,8 @@ void cadastrar(Tproduto estoque[], int *tamanho){
 	alinhaTexto(80, "CADASTRAR PRODUTO");	
 	// solicita o codigo do produto
 	do{
-		printf("Código do produto--------------------------: ");
+		//printf("Código do produto--------------------------: ");
+		camposCadastro(50, "Código do produto");
 		scanf("%ld", &aux.codigo);
 		fflush(stdin);
 		
@@ -265,7 +267,8 @@ void cadastrar(Tproduto estoque[], int *tamanho){
 	
 	// Descrição do produto
 	do{
-		printf("Descrição----------------------------------: ");
+		//printf("Descrição----------------------------------: ");
+		camposCadastro(50, "Descrição");
 		uppercase(gets(aux.descricao));
 		fflush(stdin);
 		if(aux.descricao[0] == '\0'){
@@ -276,7 +279,8 @@ void cadastrar(Tproduto estoque[], int *tamanho){
 	
 	// Quantidade do produto
 	do{
-		printf("Quantidade de produto em estoque-----------: ");
+		//printf("Quantidade de produto em estoque-----------: ");
+		camposCadastro(50, "Quantidade de produto em estoque");
 		scanf("%f", &aux.quantidade);
 		fflush(stdin);
 		if(aux.quantidade < 0){
@@ -287,7 +291,8 @@ void cadastrar(Tproduto estoque[], int *tamanho){
 	
 	// Unidade do produto
 	do{
-		printf("Unidade [KG, PC, UN, LT] ------------------: ");
+		//printf("Unidade [KG, PC, UN, LT] ------------------: ");
+		camposCadastro(50, "Unidade [KG, PC, UN, LT]");
 		uppercase(gets(aux.unidade));
 		fflush(stdin);
 		if(aux.unidade[0] == '\0'){
@@ -298,7 +303,8 @@ void cadastrar(Tproduto estoque[], int *tamanho){
 	
 	// Estoque minimo
 	do{
-		printf("Estoque minimo-----------------------------: ");
+		//printf("Estoque minimo-----------------------------: ");
+        camposCadastro(50, "Estoque minimo");
 		scanf("%f", &aux.estoque_min);
 		fflush(stdin);
 		if(aux.estoque_min < 0){
@@ -310,7 +316,8 @@ void cadastrar(Tproduto estoque[], int *tamanho){
 	// Grupo do produto
 	do{
 		printf("Grupo:\n[1] Ração\n[2] Medicamentos\n[3] Acessórios\n[4] Higiene\n[5] Brinquedos\n");
-		printf("Selecione uma Categoria--------------------: ");
+		//printf("Selecione uma Categoria--------------------: ");
+        camposCadastro(50, "Selecione uma Categoria");
 		scanf("%i", &aux.grupo);
 		fflush(stdin);
 //		if(aux.grupo != 1 && aux.grupo != 2 && aux.grupo != 3 && aux.grupo != 4 && aux.grupo != 5){
@@ -324,7 +331,8 @@ void cadastrar(Tproduto estoque[], int *tamanho){
 	
 	// Fornecedor do produto
 	do{
-		printf("Fornecedor---------------------------------: ");
+		//printf("Fornecedor---------------------------------: ");
+        camposCadastro(50, "Fornecedor");
 		uppercase(gets(aux.fornecedor));
 		fflush(stdin);
 		if(aux.fornecedor[0] == '\0'){
@@ -334,7 +342,8 @@ void cadastrar(Tproduto estoque[], int *tamanho){
 	
 	//Preço de compra do produto
 	do{
-		printf("Preco de compra do produto-----------------: ");
+		//printf("Preco de compra do produto-----------------: ");
+        camposCadastro(50, "Preco de compra do produto");
 		scanf("%f", &aux.pr_compra);
 		fflush(stdin);
 		if(aux.pr_compra < 0){
@@ -345,7 +354,8 @@ void cadastrar(Tproduto estoque[], int *tamanho){
 
 	//Preço de venda do produto
 	do{
-		printf("Preco de venda do produto------------------: ");
+		//printf("Preco de venda do produto------------------: ");
+        camposCadastro(50, "Preco de venda do produto");
 		scanf("%f", &aux.pr_venda);
 		fflush(stdin);
 		if(aux.pr_venda < 0){
@@ -402,7 +412,8 @@ void atualizar(Tproduto estoque[], int *tamanho){
 	
 	alinhaTexto(80, "EDITAR PRODUTO");
 	
-	printf("Código do produto--------------------------: ");
+	//printf("Código do produto--------------------------: ");
+    camposCadastro(50, "Código do produto");
 	scanf("%i", &cod);
 	fflush(stdin);
 	
@@ -430,7 +441,8 @@ void atualizar(Tproduto estoque[], int *tamanho){
 			alinhaTexto(80, "EDITAR PRODUTO");
 			// Descrição do produto
 			do{
-				printf("Digite o nova descrição------------------------: ");
+				//printf("Digite o nova descrição------------------------: ");
+                camposCadastro(50, "Digite o nova descrição");
 				uppercase(gets(aux.descricao));
 				fflush(stdin);
 				if(aux.descricao[0] == '\0'){
@@ -444,7 +456,8 @@ void atualizar(Tproduto estoque[], int *tamanho){
 			alinhaTexto(80, "EDITAR PRODUTO");
 			// Unidade do produto
 			do{
-				printf("Unidade [KG, PC, UN, LT, CX] ----------------------: ");
+				//printf("Unidade [KG, PC, UN, LT, CX] ----------------------: ");
+                camposCadastro(50, "Unidade [KG, PC, UN, LT, CX]");
 //				gets(aux.unidade);
 				uppercase(gets(aux.unidade));
 				fflush(stdin);
@@ -460,7 +473,8 @@ void atualizar(Tproduto estoque[], int *tamanho){
 			// Grupo do produto
 			do{
 				printf("Grupo:\n[1] Ração\n[2] Medicamentos\n[3] Acessórios\n[4] Higiene\n[5] Brinquedos\n");
-				printf("Selecione uma Categoria--------------------: ");
+				//printf("Selecione uma Categoria--------------------: ");
+                camposCadastro(50, "Selecione uma Categoria");
 				scanf("%i", &aux.grupo);
 				fflush(stdin);
 //				if(aux.grupo != 1 && aux.grupo != 2 && aux.grupo != 3 && aux.grupo != 4 && aux.grupo != 5){
@@ -480,7 +494,8 @@ void atualizar(Tproduto estoque[], int *tamanho){
 			alinhaTexto(80, "EDITAR PRODUTO");
 			// Estoque minimo
 			do{
-				printf("Estoque minimo---------------------------------: ");
+				//printf("Estoque minimo---------------------------------: ");
+                camposCadastro(50, "Estoque minimo");
 				scanf("%f", &aux.estoque_min);
 				fflush(stdin);
 				if(aux.estoque_min < 0){
@@ -495,7 +510,8 @@ void atualizar(Tproduto estoque[], int *tamanho){
 			alinhaTexto(80, "EDITAR PRODUTO");
 			//Preço de venda do produto
 			do{
-				printf("Preco de venda do produto----------------------: ");
+				//printf("Preco de venda do produto----------------------: ");
+                camposCadastro(50, "Preco de venda do produto");
 				scanf("%f", &aux.pr_venda);
 				fflush(stdin);
 				if(aux.pr_venda < 0){
@@ -553,7 +569,8 @@ void excluir (Tproduto estoque[], int *tamanho){
 	
 	alinhaTexto(80, "EXCLUIR PRODUTO");
 
-	printf("Código do produto a ser excluido ----------: ");
+	//printf("Código do produto a ser excluido ----------: ");
+    camposCadastro(50, "Código do produto a ser excluido");
 
 	scanf("%d", &codigo);
 	fflush(stdin);
@@ -1235,15 +1252,6 @@ void comprar(Tproduto estoque[], int *tamanho){
 	}
 }
 
-// Alinha o titulo das seçoes
-void alinhaTexto(int largura, char titulo[]){
-    int tamanhoTitulo = strlen(titulo);
-    int espaco = (tamanhoTitulo >= largura) ? 0 : (largura - tamanhoTitulo) / 2;
-    
-    printf ("----------------------------------------------------------------------------\n");
-    printf("%*.*s%s\n", espaco, espaco, " ", titulo);
-	printf ("----------------------------------------------------------------------------\n\n");
-}
 
 // Lista de produtos em formato de ficha
 void mostraFicha(Tproduto estoque[], int index){
@@ -1304,4 +1312,22 @@ char* uppercase(char *uppertext){
 		texto[i] = toupper(texto[i]);
 	}
 	return texto;
+}
+
+// Campos cadastro
+void camposCadastro(int largura, char titulo[]){
+    int tamanhoTitulo = strlen(titulo);
+    int espaco = largura - tamanhoTitulo;
+    
+    printf("%s%*.*s: ", titulo, espaco, espaco, " --------------------------------------------------");
+}
+
+// Alinha o titulo das seçoes
+void alinhaTexto(int largura, char titulo[]){
+    int tamanhoTitulo = strlen(titulo);
+    int espaco = (tamanhoTitulo >= largura) ? 0 : (largura - tamanhoTitulo) / 2;
+    
+    printf ("----------------------------------------------------------------------------\n");
+    printf("%*.*s%s\n", espaco, espaco, " ", titulo);
+	printf ("----------------------------------------------------------------------------\n\n");
 }
