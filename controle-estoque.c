@@ -12,7 +12,7 @@ int ordenado = 0; // variável p/ controlar a ordenação dos dados
 typedef struct TProduto{
     long int codigo;
     int grupo, lucro;
-    char descricao[41], unidade[3], fornecedor[41];
+    char nomeProduto[41], unidade[3], fornecedor[41];
     float quantidade, quantidadeDisponivel, estoque_min, custoInicial, custoTemporario, receita, pr_compra, pr_venda, valorLucro, vendidos;
 }Tproduto;
 
@@ -263,15 +263,15 @@ void cadastrar(Tproduto estoque[], int *tamanho){
 		return;	
 	}
 	
-	// Descrição do produto
+	// Nome do produto
 	do{
-		camposCadastro(50, "Descrição");
-		uppercase(gets(aux.descricao));
+		camposCadastro(50, "Nome");
+		uppercase(gets(aux.nomeProduto));
 		fflush(stdin);
-		if(aux.descricao[0] == '\0'){
+		if(aux.nomeProduto[0] == '\0'){
 			printf("O campo descricao não pode ser vazio. \n");	
 		}
-	}while(aux.descricao[0] == '\0');
+	}while(aux.nomeProduto[0] == '\0');
 	
 	
 	// Quantidade do produto
@@ -413,7 +413,7 @@ void atualizar(Tproduto estoque[], int *tamanho){
 		mostraFicha(estoque, pos);
 		
 		printf("\nO que deseja alterar? \n");
-		printf("1 - Descrição do produto: \n");
+		printf("1 - Nome do produto: \n");
 		printf("2 - Unidade do produto: \n");
 		printf("3 - Grupo do produto: \n");
 		printf("4 - Estoque minimo: \n");
@@ -426,15 +426,15 @@ void atualizar(Tproduto estoque[], int *tamanho){
 		case 1:
 			system("cls");
 			alinhaTexto(80, "EDITAR PRODUTO");
-			// Descrição do produto
+			// Nome do produto
 			do{
-                camposCadastro(50, "Digite o nova descrição");
-				uppercase(gets(aux.descricao));
+                camposCadastro(50, "Digite o nova Nome");
+				uppercase(gets(aux.nomeProduto));
 				fflush(stdin);
-				if(aux.descricao[0] == '\0'){
+				if(aux.nomeProduto[0] == '\0'){
 					printf("O campo descricao não pode ser vazio. \n");	
 				}
-			}while(aux.descricao[0] == '\0');
+			}while(aux.nomeProduto[0] == '\0');
 						
 			break;
 		case 2:
@@ -603,7 +603,7 @@ void consultar(Tproduto estoque[], int *tamanho){
 	alinhaTexto(80, "PESQUISAR PRODUTO");
 	
 	printf("1 - Pesquisar produto por código \n");
-	printf("2 - Pesquisar produtos por descrição \n");
+	printf("2 - Pesquisar produtos por Nome \n");
 	printf("0 - Voltar ao menu\n");
 	scanf("%i", &opc);
 	fflush(stdin);
@@ -663,7 +663,7 @@ void pesquisaDescricao(Tproduto estoque[], int *tamanho){
 	
 	int index, pos, cod, opc;
 	
-	alinhaTexto(80, "PESQUISAR POR DESCRIÇÃO");
+	alinhaTexto(80, "PESQUISAR POR Nome");
 		
 	char buscaDescricao[41];
 	char *pesquisa;
@@ -674,11 +674,11 @@ void pesquisaDescricao(Tproduto estoque[], int *tamanho){
 	fflush(stdin);
 	system("cls");
 	
-	alinhaTexto(80, "PESQUISAR POR DESCRIÇÃO");
+	alinhaTexto(80, "PESQUISAR POR Nome");
 
 	int porPagina = 1;
 	for(index = 0; index < *tamanho; index++){
-		pesquisa = strstr(estoque[index].descricao, uppercase(buscaDescricao));
+		pesquisa = strstr(estoque[index].nomeProduto, uppercase(buscaDescricao));
 	
 		if(pesquisa){
 			buscaResultado = true;
@@ -689,7 +689,7 @@ void pesquisaDescricao(Tproduto estoque[], int *tamanho){
 		if(porPagina > 2){
 			system("pause");
 			system("cls");
-			alinhaTexto(80, "PESQUISAR POR DESCRIÇÃO");
+			alinhaTexto(80, "PESQUISAR POR Nome");
 			porPagina = 1;
 		}
 	}	
@@ -775,7 +775,7 @@ void relatorioPreco(Tproduto estoque[], int *tamanho){
 	
 	alinhaTexto(80, "RELATÓRIO POR PREÇO");
 			
-	printf("Código  Descrição                                                 Preço     \n");
+	printf("Código  Nome                                                 Preço     \n");
 	printf("----------------------------------------------------------------------------\n");
 
 	int porPagina = 1;
@@ -1074,7 +1074,7 @@ void vender(Tproduto estoque[], int *tamanho){
 	pos = pesquisabinaria(estoque, cod, *tamanho);
 	if(pos >= 0){
 		aux = estoque[pos];
-		printf("Descrição                                               Preço     Quantidade\n");
+		printf("Nome                                               Preço     Quantidade\n");
 		printf("----------------------------------------------------------------------------\n");
 		mostraListaVenda(estoque, pos);
 		
@@ -1093,7 +1093,7 @@ void vender(Tproduto estoque[], int *tamanho){
 		
 		valorVenda = qtdVendida * aux.pr_venda;
 		
-		printf("Itens (qtd): %.2f  Valor a pagar: R$ %.2f \n", qtdVendida, valorVenda);
+		printf("Itens (qtd): %.2f  Valor a receber: R$ %.2f \n", qtdVendida, valorVenda);
 		
 		aux.quantidadeDisponivel = aux.quantidadeDisponivel - qtdVendida; // atualiza a quantidade descontando os itens vendidos sem interferir na quantidade comprada inicialmente.
 		aux.custoTemporario = aux.custoTemporario - valorVenda;		
@@ -1155,7 +1155,7 @@ void comprar(Tproduto estoque[], int *tamanho){
 		// Fornecedor do produto
 		do{
 			printf("Fornecedor---------------------------------------: ");
-			gets(aux.fornecedor);
+			uppercase(gets(aux.fornecedor));
 			fflush(stdin);
 			if(aux.fornecedor[0] == '\0'){
 				printf("O campo fornecedor não pode ser vazio. \n");	
@@ -1192,7 +1192,7 @@ void comprar(Tproduto estoque[], int *tamanho){
 		system("cls");
 		alinhaTexto(80, "COMPRAR PRODUTO");
 		
-		printf("Produto: %s\n", aux.descricao);
+		printf("Produto: %s\n", aux.nomeProduto);
 		printf("Fornecedor: %s\n", aux.fornecedor);
 		printf("Quantidade: %-36.2f  Valor a pagar: R$ %6.2f \n", qtdCompra, valorCompra);
 		printf("Novo estoque: %.2f\n", aux.quantidadeDisponivel);
@@ -1233,7 +1233,7 @@ void comprar(Tproduto estoque[], int *tamanho){
 void mostraFicha(Tproduto estoque[], int index){
 	
 	printf("Código: %-57ld Grupo: %3i\n", estoque[index].codigo, estoque[index].grupo);
-	printf("Descricao: %-52s Unidade: %3s\n", estoque[index].descricao, estoque[index].unidade);
+	printf("Descricao: %-52s Unidade: %3s\n", estoque[index].nomeProduto, estoque[index].unidade);
 	printf("Fornecedor: %s\n", estoque[index].fornecedor);
 	
 	//Mostra a linha de preços e lucro com cores vermelha para lucros abaixo de 0% e verde para lucro 0% ou maiores
@@ -1260,21 +1260,21 @@ void mostraFicha(Tproduto estoque[], int index){
 
 // Lista de produtos por preço
 void mostraLista(Tproduto estoque[], int index){
-	printf("%-7ld %-57s R$ %6.2f\n", estoque[index].codigo, estoque[index].descricao, estoque[index].pr_venda);
+	printf("%-7ld %-57s R$ %6.2f\n", estoque[index].codigo, estoque[index].nomeProduto, estoque[index].pr_venda);
 	printf("----------------------------------------------------------------------------\n");
 	return;
 }
 
 // Usado em conjunto com a função de venda de produtos
 void mostraListaVenda(Tproduto estoque[], int index){
-	printf("%-55s R$ %-7.2f %.2f %2s\n", estoque[index].descricao, estoque[index].pr_venda, estoque[index].quantidadeDisponivel, estoque[index].unidade);
+	printf("%-55s R$ %-7.2f %.2f %2s\n", estoque[index].nomeProduto, estoque[index].pr_venda, estoque[index].quantidadeDisponivel, estoque[index].unidade);
 	printf("----------------------------------------------------------------------------\n");
 	return;
 }
 
 // Usado em conjunto com a função de compra de produtos
 void mostraListaCompra(Tproduto estoque[], int index){
-	printf("Descrição: %s\n", estoque[index].descricao);
+	printf("Nome: %s\n", estoque[index].nomeProduto);
 	printf("Fornecedor: %-51s Unidade: %3s\n", estoque[index].fornecedor, estoque[index].unidade);
 	printf("----------------------------------------------------------------------------\n");
 	return;
