@@ -5,7 +5,7 @@
 #include <locale.h>
 
 
-const int MAX=50; // limitando o tamanho do vetor
+#define MAX 50 // limitando o tamanho do vetor
 int ordenado = 0; // variável p/ controlar a ordenação dos dados
 
 // Tipo de dado especial (Registro)
@@ -67,7 +67,6 @@ int main(){
 	setlocale(LC_ALL,"");
 	Tproduto estoque[MAX];
     int tamanho=0, opcao, opc;
-    char nome[20];
     leitura(estoque, &tamanho);// abre o arquivo da base de dados
     
     do{
@@ -245,7 +244,6 @@ void cadastrar(Tproduto estoque[], int *tamanho){
 	alinhaTexto(80, "CADASTRAR PRODUTO");	
 	// solicita o codigo do produto
 	do{
-		//printf("Código do produto--------------------------: ");
 		camposCadastro(50, "Código do produto");
 		scanf("%ld", &aux.codigo);
 		fflush(stdin);
@@ -267,7 +265,6 @@ void cadastrar(Tproduto estoque[], int *tamanho){
 	
 	// Descrição do produto
 	do{
-		//printf("Descrição----------------------------------: ");
 		camposCadastro(50, "Descrição");
 		uppercase(gets(aux.descricao));
 		fflush(stdin);
@@ -279,7 +276,6 @@ void cadastrar(Tproduto estoque[], int *tamanho){
 	
 	// Quantidade do produto
 	do{
-		//printf("Quantidade de produto em estoque-----------: ");
 		camposCadastro(50, "Quantidade de produto em estoque");
 		scanf("%f", &aux.quantidade);
 		fflush(stdin);
@@ -291,7 +287,6 @@ void cadastrar(Tproduto estoque[], int *tamanho){
 	
 	// Unidade do produto
 	do{
-		//printf("Unidade [KG, PC, UN, LT] ------------------: ");
 		camposCadastro(50, "Unidade [KG, PC, UN, LT]");
 		uppercase(gets(aux.unidade));
 		fflush(stdin);
@@ -303,7 +298,6 @@ void cadastrar(Tproduto estoque[], int *tamanho){
 	
 	// Estoque minimo
 	do{
-		//printf("Estoque minimo-----------------------------: ");
         camposCadastro(50, "Estoque minimo");
 		scanf("%f", &aux.estoque_min);
 		fflush(stdin);
@@ -316,13 +310,10 @@ void cadastrar(Tproduto estoque[], int *tamanho){
 	// Grupo do produto
 	do{
 		printf("Grupo:\n[1] Ração\n[2] Medicamentos\n[3] Acessórios\n[4] Higiene\n[5] Brinquedos\n");
-		//printf("Selecione uma Categoria--------------------: ");
         camposCadastro(50, "Selecione uma Categoria");
 		scanf("%i", &aux.grupo);
 		fflush(stdin);
-//		if(aux.grupo != 1 && aux.grupo != 2 && aux.grupo != 3 && aux.grupo != 4 && aux.grupo != 5){
-//			printf(" Digite uma categoria válida\n");
-//		}
+
 		if(aux.grupo < 1 || aux.grupo > 5){
 			printf("Digite uma categoria válida\n");
 		}
@@ -331,7 +322,6 @@ void cadastrar(Tproduto estoque[], int *tamanho){
 	
 	// Fornecedor do produto
 	do{
-		//printf("Fornecedor---------------------------------: ");
         camposCadastro(50, "Fornecedor");
 		uppercase(gets(aux.fornecedor));
 		fflush(stdin);
@@ -342,7 +332,6 @@ void cadastrar(Tproduto estoque[], int *tamanho){
 	
 	//Preço de compra do produto
 	do{
-		//printf("Preco de compra do produto-----------------: ");
         camposCadastro(50, "Preco de compra do produto");
 		scanf("%f", &aux.pr_compra);
 		fflush(stdin);
@@ -354,7 +343,6 @@ void cadastrar(Tproduto estoque[], int *tamanho){
 
 	//Preço de venda do produto
 	do{
-		//printf("Preco de venda do produto------------------: ");
         camposCadastro(50, "Preco de venda do produto");
 		scanf("%f", &aux.pr_venda);
 		fflush(stdin);
@@ -412,7 +400,6 @@ void atualizar(Tproduto estoque[], int *tamanho){
 	
 	alinhaTexto(80, "EDITAR PRODUTO");
 	
-	//printf("Código do produto--------------------------: ");
     camposCadastro(50, "Código do produto");
 	scanf("%i", &cod);
 	fflush(stdin);
@@ -441,7 +428,6 @@ void atualizar(Tproduto estoque[], int *tamanho){
 			alinhaTexto(80, "EDITAR PRODUTO");
 			// Descrição do produto
 			do{
-				//printf("Digite o nova descrição------------------------: ");
                 camposCadastro(50, "Digite o nova descrição");
 				uppercase(gets(aux.descricao));
 				fflush(stdin);
@@ -456,9 +442,7 @@ void atualizar(Tproduto estoque[], int *tamanho){
 			alinhaTexto(80, "EDITAR PRODUTO");
 			// Unidade do produto
 			do{
-				//printf("Unidade [KG, PC, UN, LT, CX] ----------------------: ");
                 camposCadastro(50, "Unidade [KG, PC, UN, LT, CX]");
-//				gets(aux.unidade);
 				uppercase(gets(aux.unidade));
 				fflush(stdin);
 				if(aux.unidade[0] == '\0'){
@@ -473,13 +457,10 @@ void atualizar(Tproduto estoque[], int *tamanho){
 			// Grupo do produto
 			do{
 				printf("Grupo:\n[1] Ração\n[2] Medicamentos\n[3] Acessórios\n[4] Higiene\n[5] Brinquedos\n");
-				//printf("Selecione uma Categoria--------------------: ");
                 camposCadastro(50, "Selecione uma Categoria");
 				scanf("%i", &aux.grupo);
 				fflush(stdin);
-//				if(aux.grupo != 1 && aux.grupo != 2 && aux.grupo != 3 && aux.grupo != 4 && aux.grupo != 5){
-//					printf(" Digite uma categoria válida\n");
-//				}
+
 				if(aux.grupo < 1 || aux.grupo > 5){
 					system("cls");
 					alinhaTexto(76, "EDITAR PRODUTO");
@@ -494,7 +475,6 @@ void atualizar(Tproduto estoque[], int *tamanho){
 			alinhaTexto(80, "EDITAR PRODUTO");
 			// Estoque minimo
 			do{
-				//printf("Estoque minimo---------------------------------: ");
                 camposCadastro(50, "Estoque minimo");
 				scanf("%f", &aux.estoque_min);
 				fflush(stdin);
@@ -510,7 +490,6 @@ void atualizar(Tproduto estoque[], int *tamanho){
 			alinhaTexto(80, "EDITAR PRODUTO");
 			//Preço de venda do produto
 			do{
-				//printf("Preco de venda do produto----------------------: ");
                 camposCadastro(50, "Preco de venda do produto");
 				scanf("%f", &aux.pr_venda);
 				fflush(stdin);
@@ -569,7 +548,6 @@ void excluir (Tproduto estoque[], int *tamanho){
 	
 	alinhaTexto(80, "EXCLUIR PRODUTO");
 
-	//printf("Código do produto a ser excluido ----------: ");
     camposCadastro(50, "Código do produto a ser excluido");
 
 	scanf("%d", &codigo);
@@ -722,7 +700,7 @@ void pesquisaDescricao(Tproduto estoque[], int *tamanho){
 		system("cls");
 		porPagina = 0;
 	}
-	//corrige para não mostrar esse sistem pause se não retornar resultados
+	//corrige para não mostrar esse system pause se não retornar resultados
 	if(porPagina != 0){
 		system("pause");
 		system("cls");
@@ -733,7 +711,6 @@ void pesquisaDescricao(Tproduto estoque[], int *tamanho){
 void relatorio(Tproduto estoque[], int *tamanho){
 	
 	int opc;
-	// pos = pesquisabinaria(estoque, cod, *tamanho);
 	
 	alinhaTexto(80, "RELATÓRIOS");
 	
@@ -1000,7 +977,6 @@ void produtosUnidade(Tproduto estoque[], int *tamanho){
 	
 		printf("Buscar por [KG, PC, UN, LT, CX]: ");
 		scanf("%s", &buscaUnidade);
-//			gets(buscaDescricao);
 		fflush(stdin);
 		system("cls");
 		
