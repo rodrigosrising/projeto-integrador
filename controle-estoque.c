@@ -16,6 +16,13 @@ typedef struct TProduto{
     float quantidade, quantidadeDisponivel, estoque_min, custoInicial, custoTemporario, receita, pr_compra, pr_venda, valorLucro, vendidos;
 }Tproduto;
 
+typedef struct Resultado{
+    long int codigo;
+    int grupo, lucro;
+    char nomeProduto[41], unidade[3], fornecedor[41];
+    float quantidade, quantidadeDisponivel, estoque_min, custoInicial, custoTemporario, receita, pr_compra, pr_venda, valorLucro, vendidos;
+}Resultado;
+
 
 // Escopo do programa
 void leitura(Tproduto estoque[], int *tamanho);	// gera o arquivo .dat na primeira vez
@@ -63,13 +70,21 @@ void mostraLista(Tproduto estoque[], int index); 	//exibe os dados do produto em
 void mostraListaVenda(Tproduto estoque[], int index);
 void mostraListaCompra(Tproduto estoque[], int index);
 
+//Paginação
+// 1 - mostraFicha(estoque, index)
+// 2 - mostraLista(estoque, index)
+// 3 - mostraListaVenda(estoque, index)
+// 4 - mostraListaCompra(estoque, index)
+void paginacao(Tproduto estoque[], int numProdutos, int itensPagina, int tipoLista, char titulo[]); //tipoLista define qual modelo será exibido
+
 int main(){
 	setlocale(LC_ALL,"");
 	Tproduto estoque[MAX];
-    int tamanho=0, opcao, opc;
+    int tamanho = 0, n_resultados = 0, opcao, opc;
     leitura(estoque, &tamanho);// abre o arquivo da base de dados
     
     do{
+    	
 		alinhaTexto(80, "CONTROLE DE ESTOQUE");
         printf ("1 - CADASTRAR\n");
         printf ("2 - ATUALIZAR\n");
@@ -661,9 +676,12 @@ void pesquisaCodigo(Tproduto estoque[], int *tamanho){
 // consulta por descricao
 void pesquisaDescricao(Tproduto estoque[], int *tamanho){
 	
+	Tproduto resultados[MAX];
+	int n_resultados = 0;
+	
 	int index, pos, cod, opc;
 	
-	alinhaTexto(80, "PESQUISAR POR Nome");
+	alinhaTexto(80, "PESQUISAR POR NOME");
 		
 	char buscaDescricao[41];
 	char *pesquisa;
@@ -674,34 +692,24 @@ void pesquisaDescricao(Tproduto estoque[], int *tamanho){
 	fflush(stdin);
 	system("cls");
 	
-	alinhaTexto(80, "PESQUISAR POR Nome");
+	alinhaTexto(80, "PESQUISAR POR NOME");
 
-	int porPagina = 1;
 	for(index = 0; index < *tamanho; index++){
 		pesquisa = strstr(estoque[index].nomeProduto, uppercase(buscaDescricao));
 	
 		if(pesquisa){
 			buscaResultado = true;
-			mostraFicha(estoque, index);
-			porPagina++;
+			paginacao(estoque, *tamanho, 2, 1, "PESQUISAR POR NOME");
 		}
-		
-		if(porPagina > 2){
-			system("pause");
-			system("cls");
-			alinhaTexto(80, "PESQUISAR POR Nome");
-			porPagina = 1;
-		}
+	}
+	
+	for(index = 0; index < n_resultados; index++){
+		buscaResultado = true;
+		paginacao(resultados, n_resultados, 2, 1, "PESQUISAR POR NOME");
 	}	
 	
 	if(buscaResultado == false){
 		printf ("Sua busca por '%s' não encontrou nenhum produto.\n", uppercase(buscaDescricao));
-		system("pause");
-		system("cls");
-		porPagina = 0;
-	}
-	//corrige para não mostrar esse system pause se não retornar resultados
-	if(porPagina != 0){
 		system("pause");
 		system("cls");
 	}
@@ -752,16 +760,8 @@ void relatorioGeral(Tproduto estoque[], int *tamanho){
 
 	alinhaTexto(80, "RELATÓRIO GERAL");
 				
-	int porPagina = 1;
 	for(index = 0; index < *tamanho; index++){
-		mostraFicha(estoque, index);
-		porPagina++;
-		if(porPagina > 2){
-			system("pause");
-			system("cls");
-			alinhaTexto(80, "RELATÓRIO GERAL");
-			porPagina = 1;
-		}
+		paginacao(estoque, *tamanho, 2, 1, "RELATÓRIO GERAL");
 	}
 	system("pause");
 	system("cls");
@@ -769,6 +769,9 @@ void relatorioGeral(Tproduto estoque[], int *tamanho){
 
 // Relatorio por Preço
 void relatorioPreco(Tproduto estoque[], int *tamanho){
+	
+//	Tproduto resultados[MAX];
+//	int n_resultados = 0;
 	
 	int index, pos, cod, opc;
 	pos = pesquisabinaria(estoque, cod, *tamanho);
@@ -778,17 +781,8 @@ void relatorioPreco(Tproduto estoque[], int *tamanho){
 	printf("Código  Nome                                                 Preço     \n");
 	printf("----------------------------------------------------------------------------\n");
 
-	int porPagina = 1;
 	for(index = 0; index < *tamanho; index++){
-		mostraLista(estoque, index);
-		
-		porPagina++;
-		if(porPagina > 15){
-			system("pause");
-			system("cls");
-			alinhaTexto(80, "RELATÓRIO POR PREÇO");
-			porPagina = 1;
-		}
+		paginacao(estoque, *tamanho, 8, 2, "RELATÓRIO POR PREÇO");
 	}
 	system("pause");
 	system("cls");
@@ -850,22 +844,25 @@ void relatorioEspecial(Tproduto estoque[], int *tamanho){
 // Produtos com margem de lucro abaixo da mínima
 void margemLucroMinima(Tproduto estoque[], int *tamanho){
 	
+	Tproduto resultados[MAX];
+	int n_resultados = 0;
+	
 	int index, pos, cod;
 	alinhaTexto(80, "Produtos com margem de lucro abaixo da mínima");
 						
-	int porPagina = 1;
 	for(index = 0; index < *tamanho; index++){
+				
 		if(estoque[index].lucro < 0){
-			mostraFicha(estoque, index);
-			porPagina++;
-			if(porPagina > 2){
-				system("pause");
-				system("cls");
-				alinhaTexto(80, "Produtos com margem de lucro abaixo da mínima");
-				porPagina = 1;
-			}
+			resultados[n_resultados] = estoque[index];
+			n_resultados++;
 		}
 	}
+	
+	for(index = 0; index < n_resultados; index++){
+		// buscaResultado = true;
+		paginacao(resultados, n_resultados, 2, 1, "Produtos com estoque abaixo do mínimo");
+	}
+	
 	system("pause");
 	system("cls");
 }
@@ -873,22 +870,24 @@ void margemLucroMinima(Tproduto estoque[], int *tamanho){
 // Produtos com estoque abaixo do mínimo
 void estoqueAbaixoMinimo(Tproduto estoque[], int *tamanho){
 	
+	Tproduto resultados[MAX];
+	int n_resultados = 0;
+	
 	int index, pos, cod;
 	alinhaTexto(80, "Produtos com estoque abaixo do mínimo");
 						
-	int porPagina = 1;
 	for(index = 0; index < *tamanho; index++){
 		if(estoque[index].quantidadeDisponivel < estoque[index].estoque_min){
-			mostraFicha(estoque, index);
-			porPagina++;
-			if(porPagina > 2){
-				system("pause");
-				system("cls");
-				alinhaTexto(80, "Produtos com estoque abaixo do mínimo");
-				porPagina = 1;
-			}
+			resultados[n_resultados] = estoque[index];
+			n_resultados++;
 		}
 	}
+	
+	for(index = 0; index < n_resultados; index++){
+		//buscaResultado = true;
+		paginacao(resultados, n_resultados, 2, 1, "Produtos com estoque abaixo do mínimo");
+	}
+	
 	system("pause");
 	system("cls");
 }
@@ -896,28 +895,33 @@ void estoqueAbaixoMinimo(Tproduto estoque[], int *tamanho){
 // Produtos que estão sendo vendidos com prejuízo
 void produtosComPrejuizo(Tproduto estoque[], int *tamanho){
 	
+	Tproduto resultados[MAX];
+	int n_resultados = 0;
+	
 	int index, pos, cod;
 	alinhaTexto(80, "Produtos que estão sendo vendidos com prejuízo");
 						
-	int porPagina = 1;
 	for(index = 0; index < *tamanho; index++){
 		if(estoque[index].pr_venda < estoque[index].pr_compra){
-			mostraFicha(estoque, index);
-			porPagina++;
-			if(porPagina > 2){
-				system("pause");
-				system("cls");
-				alinhaTexto(80, "Produtos que estão sendo vendidos com prejuízo");
-				porPagina = 1;
-			}
+			resultados[n_resultados] = estoque[index];
+            n_resultados++;
 		}
 	}
+	
+	for(index = 0; index < n_resultados; index++){
+		//buscaResultado = true;
+		paginacao(resultados, n_resultados, 2, 1, "Produtos que estão sendo vendidos com prejuízo");
+	}
+		
 	system("pause");
 	system("cls");
 }
 
 // Produtos por fornecedor
 void produtosFornecedor(Tproduto estoque[], int *tamanho){
+	
+	Tproduto resultados[MAX];
+	int n_resultados = 0;
 	
 	int index, pos, cod;
 	alinhaTexto(80, "PESQUISAR POR FORNECEDOR");
@@ -933,39 +937,35 @@ void produtosFornecedor(Tproduto estoque[], int *tamanho){
 		system("cls");
 		
 		alinhaTexto(80, "Produtos fornecidos por um fornecedor");
-		int porPagina = 1;
+
 		for(index = 0; index < *tamanho; index++){
 			pesquisa = strstr(estoque[index].fornecedor, uppercase(buscaFornecedor));
-			if(pesquisa){
-				buscaResultado = true;
-				mostraFicha(estoque, index);
-				porPagina++;
-			}
 			
-			if(porPagina > 2){
-				system("pause");
-				system("cls");
-				alinhaTexto(80, "Produtos fornecidos por um fornecedor");
-				porPagina = 1;
-			}	
+			if(pesquisa){
+        		resultados[n_resultados] = estoque[index];
+            	n_resultados++;
+			}
+		}
+		
+		for(index = 0; index < n_resultados; index++){
+			buscaResultado = true;
+			paginacao(resultados, n_resultados, 2, 1, "Produtos fornecidos por um fornecedor");
 		}
 		
 		if(buscaResultado == false){
 			printf ("Sua busca por '%s' não encontrou nenhum fornecedor.\n", uppercase(buscaFornecedor));
 			system("pause");
 			system("cls");
-			porPagina = 0;
 		}
-		//corrige para não mostrar esse sistem pause se não retornar resultados
-		if(porPagina != 0){
-			system("pause");
-			system("cls");
-		}	
+	
 	}
 }
 
 // Produtos por Unidade
 void produtosUnidade(Tproduto estoque[], int *tamanho){
+	
+	Tproduto resultados[MAX];
+	int n_resultados = 0;
 	
 	int index, pos, cod;
 	alinhaTexto(80, "PESQUISAR POR UNIDADE");
@@ -982,32 +982,23 @@ void produtosUnidade(Tproduto estoque[], int *tamanho){
 		
 		alinhaTexto(80, "Produtos de acordo com sua unidade de venda");	
 		
-		int porPagina = 1;
+		
 		for(index = 0; index < *tamanho; index++){
 			pesquisa = strstr(estoque[index].unidade, uppercase(buscaUnidade));
+			
 			if(pesquisa){
-				buscaResultado = true;
-				mostraFicha(estoque, index);
-				porPagina++;
-			}
-			
-			if(porPagina > 2){
-				system("pause");
-				system("cls");
-				alinhaTexto(80, "Produtos de acordo com sua unidade de venda");
-				porPagina = 1;
-			}
-			
+        		resultados[n_resultados] = estoque[index];
+            	n_resultados++;
+			}		
+		}
+		
+		for(index = 0; index < n_resultados; index++){
+			buscaResultado = true;
+			paginacao(resultados, n_resultados, 2, 1, "Produtos de acordo com sua unidade de venda");
 		}
 		
 		if(buscaResultado == false){
 			printf ("Sua busca por '%s' não encontrou nenhum resultado.\n", uppercase(buscaUnidade));
-			system("pause");
-			system("cls");
-			porPagina = 0;
-		}
-		//corrige para não mostrar esse sistem pause se não retornar resultados
-		if(porPagina != 0){
 			system("pause");
 			system("cls");
 		}
@@ -1306,4 +1297,76 @@ void alinhaTexto(int largura, char titulo[]){
     printf ("----------------------------------------------------------------------------\n");
     printf("%*.*s%s\n", espaco, espaco, " ", titulo);
 	printf ("----------------------------------------------------------------------------\n\n");
+}
+
+
+//Paginação
+void paginacao(Tproduto estoque[], int numProdutos, int itensPagina, int tipoLista, char titulo[]){
+	int totalPaginas = (numProdutos + itensPagina - 1) / itensPagina;
+    int paginaAtiva = 0;
+    
+    while(1){    	
+    	// calcula o inicio e final dos itens para a pagina atual.
+        int posicaoInicial = paginaAtiva * itensPagina;
+        int posicaoFinal = posicaoInicial + itensPagina;
+        
+        // Mostra o resultado
+        int index;
+        for (index = posicaoInicial; index < posicaoFinal && index < numProdutos; index++) {
+        	
+        	switch(tipoLista){
+				case 1:
+					mostraFicha(estoque, index);
+					break;
+				case 2:
+					mostraLista(estoque, index);
+					break;
+				default:
+					mostraFicha(estoque, index);
+			}
+        }
+        
+        printf ("\n\n");
+        printf("Página %d/%d:\n", paginaAtiva + 1, totalPaginas);
+        printf ("----------------------------------------------------------------------------\n");
+        // Mostra as opções de navegação
+        if (paginaAtiva > 0) {
+            printf("(A) Anterior ");
+        }
+        if (paginaAtiva < totalPaginas - 1) {
+            printf("(P) Próxima ");
+        }
+        printf("(S) Sair ");
+        
+        // Lê a opção do usuário
+        char pagina;
+        scanf(" %c", &pagina);
+
+        // Executa a opção do usuário
+        switch (pagina) {
+            case 'A':
+            case 'a':
+                if (paginaAtiva > 0) {
+                    paginaAtiva--;
+                    system("cls");
+                    alinhaTexto(80, titulo);
+                }
+                break;
+            case 'P':
+            case 'p':
+                if (paginaAtiva < totalPaginas - 1) {
+                    paginaAtiva++;
+                    system("cls");
+                    alinhaTexto(80, titulo);
+                }
+                break;
+            case 'S':
+            case 's':
+				system("cls");
+				main();
+				break;
+            default:
+                printf("Opção Inválida.\n");
+        }
+	}	
 }
