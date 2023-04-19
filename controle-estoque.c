@@ -16,14 +16,6 @@ typedef struct TProduto{
     float quantidade, quantidadeDisponivel, estoque_min, custoInicial, custoTemporario, receita, pr_compra, pr_venda, valorLucro, vendidos;
 }Tproduto;
 
-typedef struct Resultado{
-    long int codigo;
-    int grupo, lucro;
-    char nomeProduto[41], unidade[3], fornecedor[41];
-    float quantidade, quantidadeDisponivel, estoque_min, custoInicial, custoTemporario, receita, pr_compra, pr_venda, valorLucro, vendidos;
-}Resultado;
-
-
 // Escopo do programa
 void leitura(Tproduto estoque[], int *tamanho);	// gera o arquivo .dat na primeira vez
 void gravacao(Tproduto estoque[], int tamanho);	// realiza a gravação dos dado no arquivo
@@ -73,8 +65,6 @@ void mostraListaCompra(Tproduto estoque[], int index);
 //Paginação
 // 1 - mostraFicha(estoque, index)
 // 2 - mostraLista(estoque, index)
-// 3 - mostraListaVenda(estoque, index)
-// 4 - mostraListaCompra(estoque, index)
 void paginacao(Tproduto estoque[], int numProdutos, int itensPagina, int tipoLista, char titulo[]); //tipoLista define qual modelo será exibido
 
 int main(){
@@ -679,27 +669,27 @@ void pesquisaDescricao(Tproduto estoque[], int *tamanho){
 	Tproduto resultados[MAX];
 	int n_resultados = 0;
 	
-	int index, pos, cod, opc;
+	int index;
 	
 	alinhaTexto(80, "PESQUISAR POR NOME");
 		
-	char buscaDescricao[41];
+	char buscaNome[41];
 	char *pesquisa;
 	bool buscaResultado = false;
 
 	printf("Buscar por: ");
-	scanf("%s", &buscaDescricao);
+	scanf("%s", &buscaNome);
 	fflush(stdin);
 	system("cls");
 	
 	alinhaTexto(80, "PESQUISAR POR NOME");
 
 	for(index = 0; index < *tamanho; index++){
-		pesquisa = strstr(estoque[index].nomeProduto, uppercase(buscaDescricao));
+		pesquisa = strstr(estoque[index].nomeProduto, uppercase(buscaNome));
 	
 		if(pesquisa){
-			buscaResultado = true;
-			paginacao(estoque, *tamanho, 2, 1, "PESQUISAR POR NOME");
+			resultados[n_resultados] = estoque[index];
+			n_resultados++;
 		}
 	}
 	
@@ -709,7 +699,7 @@ void pesquisaDescricao(Tproduto estoque[], int *tamanho){
 	}	
 	
 	if(buscaResultado == false){
-		printf ("Sua busca por '%s' não encontrou nenhum produto.\n", uppercase(buscaDescricao));
+		printf ("Sua busca por '%s' não encontrou nenhum produto.\n", uppercase(buscaNome));
 		system("pause");
 		system("cls");
 	}
@@ -782,7 +772,7 @@ void relatorioPreco(Tproduto estoque[], int *tamanho){
 	printf("----------------------------------------------------------------------------\n");
 
 	for(index = 0; index < *tamanho; index++){
-		paginacao(estoque, *tamanho, 8, 2, "RELATÓRIO POR PREÇO");
+		paginacao(estoque, *tamanho, 5, 2, "RELATÓRIO POR PREÇO");
 	}
 	system("pause");
 	system("cls");
@@ -1219,7 +1209,6 @@ void comprar(Tproduto estoque[], int *tamanho){
 	}
 }
 
-
 // Lista de produtos em formato de ficha
 void mostraFicha(Tproduto estoque[], int index){
 	
@@ -1244,7 +1233,6 @@ void mostraFicha(Tproduto estoque[], int index){
 	printf("Investimento em R$: %-31.2f  Receita em R$: \033[1;32m%8.2f\033[0m\n", estoque[index].custoInicial, estoque[index].receita) :
 	printf("Investimento em R$: %-31.2f  Receita em R$: \033[1;31m%8.2f\033[0m\n", estoque[index].custoInicial, estoque[index].receita);
 		
-	
 	printf("----------------------------------------------------------------------------\n");
 	return;
 }
@@ -1350,6 +1338,11 @@ void paginacao(Tproduto estoque[], int numProdutos, int itensPagina, int tipoLis
                     paginaAtiva--;
                     system("cls");
                     alinhaTexto(80, titulo);
+                    
+                    if(tipoLista == 2){
+                    	printf("Código  Nome                                                 Preço     \n");
+						printf("----------------------------------------------------------------------------\n");
+					}
                 }
                 break;
             case 'P':
@@ -1358,6 +1351,11 @@ void paginacao(Tproduto estoque[], int numProdutos, int itensPagina, int tipoLis
                     paginaAtiva++;
                     system("cls");
                     alinhaTexto(80, titulo);
+                    
+                    if(tipoLista == 2){
+                    	printf("Código  Nome                                                 Preço     \n");
+						printf("----------------------------------------------------------------------------\n");
+					}
                 }
                 break;
             case 'S':
