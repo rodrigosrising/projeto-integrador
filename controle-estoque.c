@@ -8,13 +8,22 @@
 #define MAX 50 // limitando o tamanho do vetor
 int ordenado = 0; // variável p/ controlar a ordenação dos dados
 
-// Tipo de dado especial (Registro)
+// Tipo de dado especial (Produto)
 typedef struct TProduto{
     long int codigo;
     int grupo, lucro;
     char nomeProduto[41], unidade[3], fornecedor[41];
     float quantidade, quantidadeDisponivel, estoque_min, custoInicial, custoTemporario, receita, pr_compra, pr_venda, valorLucro, vendidos;
 }Tproduto;
+
+// Tipo de dado especial (Fornecedor)
+typedef struct Fornecedor{
+    long int codigo;
+    char nomeFornecedor[40];
+}Fornecedor;
+
+// Inicializa o ID do próximo fornecedor a ser cadastrado
+int proximoIDFornecedor = 1;
 
 // Escopo do programa
 void leitura(Tproduto estoque[], int *tamanho);	// gera o arquivo .dat na primeira vez
@@ -41,7 +50,6 @@ void pesquisaDescricao(Tproduto estoque[], int *tamanho);	// consulta por descri
 void relatorio(Tproduto estoque[], int *tamanho);
 void relatorioGeral(Tproduto estoque[], int *tamanho);	// Relatório Geral
 void relatorioPreco(Tproduto estoque[], int *tamanho);	// Relatório por Preço
-
 
 //Relatorios Especiais
 void relatorioEspecial(Tproduto estoque[], int *tamanho);
@@ -975,6 +983,7 @@ void produtosUnidade(Tproduto estoque[], int *tamanho){
 		
 		for(index = 0; index < *tamanho; index++){
 			pesquisa = strstr(estoque[index].unidade, uppercase(buscaUnidade));
+			//pesquisa = strstr(estoque[index].unidade, buscaUnidade);
 			
 			if(pesquisa){
         		resultados[n_resultados] = estoque[index];
@@ -1169,6 +1178,9 @@ void comprar(Tproduto estoque[], int *tamanho){
 		aux.quantidade = aux.quantidade + qtdCompra;
 		
 		valorCompra = qtdCompra * aux.pr_compra;
+		
+		aux.custoInicial = aux.custoInicial + valorCompra;
+		
 		
 		system("cls");
 		alinhaTexto(80, "COMPRAR PRODUTO");
