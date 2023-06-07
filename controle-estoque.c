@@ -7,23 +7,51 @@
 
 #define MAX 50 // limitando o tamanho do vetor
 int ordenado = 0; // variável p/ controlar a ordenação dos dados
-
+int idUnico = 0;
 // Tipo de dado especial (Produto)
 typedef struct Produto{
+	int id;
     long int codigo;
     int grupo, lucro;
     char nomeProduto[41], unidade[3], fornecedor[41];
     float quantidade, quantidadeDisponivel, estoque_min, custoInicial, custoTemporario, receita, precoCompra, precoVenda, valorLucro, vendidos;
 }produto;
 
-// Tipo de dado especial (Fornecedor)
-typedef struct Fornecedor{
-    long int codigo;
-    char nomeFornecedor[40];
-}Fornecedor;
 
-// Inicializa o ID do próximo fornecedor a ser cadastrado
-int proximoIDFornecedor = 1;
+
+int lerUltimoID() {
+    FILE *arquivo;
+    int ultimoID;
+
+    arquivo = fopen("ultimo_id.txt", "r");
+    if (arquivo == NULL) {
+        // Arquivo não existe, retorna 0 como o ID inicial
+        return 0;
+    }
+
+    fscanf(arquivo, "%d", &ultimoID);
+    fclose(arquivo);
+
+    return ultimoID;
+}
+
+void gravarUltimoID(int ultimoID) {
+    FILE *arquivo;
+
+    arquivo = fopen("ultimo_id.txt", "w");
+    if (arquivo == NULL) {
+        printf("Erro ao abrir arquivo.\n");
+        return;
+    }
+
+    fprintf(arquivo, "%d", ultimoID);
+    fclose(arquivo);
+}
+
+
+
+
+
 
 // Escopo do programa
 void leitura(produto estoque[], int *tamanho);	// gera o arquivo .dat na primeira vez
@@ -411,6 +439,19 @@ void cadastrar(produto estoque[], int *tamanho){
 		aux.lucro = aux.valorLucro/aux.custoTemporario * 100;		
 	}
 	
+	int ultimoID = lerUltimoID();
+
+	// Incrementa o último ID atribuído
+	ultimoID++;
+	
+	// Atribui o novo ID ao produto
+	aux.id = ultimoID;
+	
+	// Atualiza o último ID atribuído no arquivo
+	gravarUltimoID(ultimoID);
+		
+	
+	
 	int validaCadastro;
 	printf("As informações estão corretas?\n 1 - Sim   0 - Não \n");
 	scanf("%i", &validaCadastro);
@@ -419,9 +460,13 @@ void cadastrar(produto estoque[], int *tamanho){
 		estoque[*tamanho] = aux;
 		(*tamanho) ++;
 		ordenado = 0;
+		
+		// Atualiza o último ID atribuído no arquivo
+		gravarUltimoID(ultimoID);
+		
 		system("cls");
 		alinhaTexto(80, "CADASTRAR PRODUTO");
-		printf("Cadastro Efetuado com sucesso!\n\n");
+		printf("Cadastro efetuado com sucesso!\n\n");
 		system("pause");
 		system("cls");
 	} else {
@@ -566,7 +611,7 @@ void atualizar(produto estoque[], int *tamanho){
 			
 			system("cls");
 			alinhaTexto(80, "EDITAR PRODUTO");
-			printf("Cadastro atualizado com sucesso!\n");
+			printf("Cadastro atualizado com sucesso!\n\n");
 			system("pause");
 			system("cls");
 		} else {
@@ -575,7 +620,7 @@ void atualizar(produto estoque[], int *tamanho){
 	} else {
 		system("cls");
 		alinhaTexto(80, "EDITAR PRODUTO");
-		printf("nao existem produtos com esse código\n");
+		printf("nao existem produtos com esse código\n\n");
 		system("pause");
 		system("cls");
 	}
@@ -621,7 +666,7 @@ void excluir (produto estoque[], int *tamanho){
 			system("cls");
 			alinhaTexto(80, "EXCLUIR PRODUTO");
 	        printf("O registro não foi excluido!\n\n");
-	        printf("Aperte ENTER para voltar ao menu\n");
+	        printf("Aperte ENTER para voltar ao menu\n\n");
 			getchar();
 			system("cls");
 			return;
@@ -631,7 +676,7 @@ void excluir (produto estoque[], int *tamanho){
 		system("cls");
 		alinhaTexto(80, "EXCLUIR PRODUTO");
 		printf("Registro não localizado!\n\n");
-		printf("Aperte ENTER para voltar ao menu\n");
+		printf("Aperte ENTER para voltar ao menu\n\n");
 		getchar();
 		system("cls");
 		return;
@@ -879,6 +924,9 @@ void margemLucroMinima(produto estoque[], int *tamanho){
 		if(estoque[index].lucro < 0){
 			resultados[n_resultados] = estoque[index];
 			n_resultados++;
+		}else{
+			printf("Nenhum produto com margem de lucro abaixo da mínima.\n\n");
+			break;
 		}
 	}
 	
@@ -904,6 +952,9 @@ void estoqueAbaixoMinimo(produto estoque[], int *tamanho){
 		if(estoque[index].quantidadeDisponivel < estoque[index].estoque_min){
 			resultados[n_resultados] = estoque[index];
 			n_resultados++;
+		} else{
+			printf("Nenhum produto com estoque abaixo do mínimo.\n\n");
+			break;
 		}
 	}
 	
@@ -929,6 +980,9 @@ void produtosComPrejuizo(produto estoque[], int *tamanho){
 		if(estoque[index].precoVenda < estoque[index].precoCompra){
 			resultados[n_resultados] = estoque[index];
             n_resultados++;
+		}else{
+			printf("Nenhum produto sendo vendido com prejuízo.\n\n");
+			break;
 		}
 	}
 	
@@ -1127,13 +1181,13 @@ void vender(produto estoque[], int *tamanho){
 				
 				system("cls");
 				alinhaTexto(80, "VENDER PRODUTO");
-				printf("Venda realizada!\n");
+				printf("Venda realizada!\n\n");
 				system("pause");
 				system("cls");
 			} else {
 				system("cls");
 				alinhaTexto(80, "VENDER PRODUTO");
-				printf("Venda cancelada!\n");
+				printf("Venda cancelada!\n\n");
 				system("pause");
 				system("cls");
 			}
@@ -1142,7 +1196,7 @@ void vender(produto estoque[], int *tamanho){
 	} else {
 		system("cls");
 		alinhaTexto(80, "VENDER PRODUTO");
-		printf("nao cadastrado\n");
+		printf("nao cadastrado\n\n");
 		system("pause");
 		system("cls");
 	}
@@ -1247,7 +1301,7 @@ void comprar(produto estoque[], int *tamanho){
 	} else {
 		system("cls");
 		alinhaTexto(80, "COMPRAR PRODUTO");
-		printf("nao cadastrado\n");
+		printf("nao cadastrado\n\n");
 		system("pause");
 		system("cls");
 	}
@@ -1256,6 +1310,7 @@ void comprar(produto estoque[], int *tamanho){
 // Lista de produtos em formato de ficha
 void mostraFicha(produto estoque[], int index){
 	
+	printf("ID único: %i\n", estoque[index].id);
 	printf("Código: %-57ld Grupo: %3i\n", estoque[index].codigo, estoque[index].grupo);
 	printf("Descricao: %-52s Unidade: %3s\n", estoque[index].nomeProduto, estoque[index].unidade);
 	printf("Fornecedor: %s\n", estoque[index].fornecedor);
