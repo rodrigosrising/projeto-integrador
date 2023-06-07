@@ -472,7 +472,7 @@ void atualizar(produto estoque[], int *tamanho){
 			alinhaTexto(80, "EDITAR PRODUTO");
 			// Nome do produto
 			do{
-                camposCadastro(50, "Digite o nova Nome");
+                camposCadastro(50, "Digite o novo nome");
 				uppercase(gets(aux.nomeProduto));
 				fflush(stdin);
 				if(aux.nomeProduto[0] == '\0'){
@@ -799,7 +799,7 @@ void relatorioGeral(produto estoque[], int *tamanho){
 void relatorioPreco(produto estoque[], int *tamanho){
 		
 	int index, pos, cod;
-	pos = pesquisaBinaria(estoque, cod, *tamanho);
+	pos = pesquisaBinariaPreco(estoque, cod, *tamanho);
 	
 	alinhaTexto(80, "RELATÓRIO POR PREÇO");
 			
