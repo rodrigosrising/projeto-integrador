@@ -915,6 +915,7 @@ void margemLucroMinima(produto estoque[], int *tamanho){
 	
 	produto resultados[MAX];
 	int n_resultados = 0;
+	bool buscaResultado = false;
 	
 	int index, pos, cod;
 	alinhaTexto(80, "Produtos com margem de lucro abaixo da mínima");
@@ -924,19 +925,23 @@ void margemLucroMinima(produto estoque[], int *tamanho){
 		if(estoque[index].lucro < 0){
 			resultados[n_resultados] = estoque[index];
 			n_resultados++;
-		}else{
-			printf("Nenhum produto com margem de lucro abaixo da mínima.\n\n");
-			break;
+			buscaResultado = true;
 		}
 	}
 	
 	for(index = 0; index < n_resultados; index++){
 		// buscaResultado = true;
-		paginacao(resultados, n_resultados, 2, 1, "Produtos com estoque abaixo do mínimo");
+		paginacao(resultados, n_resultados, 2, 1, "Produtos com margem de lucro abaixo da mínima");
 	}
 	
-	system("pause");
-	system("cls");
+	if(buscaResultado == false){
+		printf("Nenhum produto com margem de lucro abaixo da mínima.\n\n");
+		system("pause");
+		system("cls");
+	}else{
+		system("pause");
+		system("cls");
+	}
 }
 
 // Produtos com estoque abaixo do mínimo
@@ -944,6 +949,7 @@ void estoqueAbaixoMinimo(produto estoque[], int *tamanho){
 	
 	produto resultados[MAX];
 	int n_resultados = 0;
+	bool buscaResultado = false;
 	
 	int index, pos, cod;
 	alinhaTexto(80, "Produtos com estoque abaixo do mínimo");
@@ -952,10 +958,8 @@ void estoqueAbaixoMinimo(produto estoque[], int *tamanho){
 		if(estoque[index].quantidadeDisponivel < estoque[index].estoque_min){
 			resultados[n_resultados] = estoque[index];
 			n_resultados++;
-		} else{
-			printf("Nenhum produto com estoque abaixo do mínimo.\n\n");
-			break;
-		}
+			buscaResultado = true;
+		} 
 	}
 	
 	for(index = 0; index < n_resultados; index++){
@@ -963,8 +967,16 @@ void estoqueAbaixoMinimo(produto estoque[], int *tamanho){
 		paginacao(resultados, n_resultados, 2, 1, "Produtos com estoque abaixo do mínimo");
 	}
 	
-	system("pause");
-	system("cls");
+	if(buscaResultado == false){
+		printf("Nenhum produto com estoque abaixo do mínimo.\n\n");
+		system("pause");
+		system("cls");
+	}else{
+		system("pause");
+		system("cls");
+	}
+	
+	
 }
 
 // Produtos que estão sendo vendidos com prejuízo
@@ -972,6 +984,7 @@ void produtosComPrejuizo(produto estoque[], int *tamanho){
 	
 	produto resultados[MAX];
 	int n_resultados = 0;
+	bool buscaResultado = false;
 	
 	int index, pos, cod;
 	alinhaTexto(80, "Produtos que estão sendo vendidos com prejuízo");
@@ -980,9 +993,7 @@ void produtosComPrejuizo(produto estoque[], int *tamanho){
 		if(estoque[index].precoVenda < estoque[index].precoCompra){
 			resultados[n_resultados] = estoque[index];
             n_resultados++;
-		}else{
-			printf("Nenhum produto sendo vendido com prejuízo.\n\n");
-			break;
+            buscaResultado = true;
 		}
 	}
 	
@@ -990,9 +1001,15 @@ void produtosComPrejuizo(produto estoque[], int *tamanho){
 		//buscaResultado = true;
 		paginacao(resultados, n_resultados, 2, 1, "Produtos que estão sendo vendidos com prejuízo");
 	}
-		
-	system("pause");
-	system("cls");
+	
+	if(buscaResultado == false){
+		printf("Nenhum produto sendo vendido com prejuízo.\n\n");
+		system("pause");
+		system("cls");
+	}else{
+		system("pause");
+		system("cls");
+	}
 }
 
 // Produtos por fornecedor
