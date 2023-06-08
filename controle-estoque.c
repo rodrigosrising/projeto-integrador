@@ -74,7 +74,7 @@ void excluir (produto estoque[], int *tamanho);	// Remove o produto selecionado
 //Consulta de produtos
 void consultar(produto estoque[], int *tamanho);	
 void pesquisaCodigo(produto estoque[], int *tamanho);	// consulta por codigo
-void pesquisaDescricao(produto estoque[], int *tamanho);	// consulta por descricao
+void pesquisaNome(produto estoque[], int *tamanho);	// consulta por descricao
 
 //Relatorios
 void relatorio(produto estoque[], int *tamanho);
@@ -221,7 +221,7 @@ int pesquisaBinaria(produto estoque[], int index, int tamanho){
     if(vazio(tamanho)) //vetor vazio
        return -1;       
     if (! ordenado){
-        ordena(estoque,tamanho);
+        ordena(estoque, tamanho);
         ordenado = 1;
     }
     int inicio = 0, final = tamanho, meio;
@@ -241,7 +241,7 @@ int pesquisaBinariaPreco(produto estoque[], int index, int tamanho){
     if(vazio(tamanho)) //vetor vazio
        return -1;       
     if (! ordenado){
-        ordenaPreco(estoque,tamanho);
+        ordenaPreco(estoque, tamanho);
         ordenado = 1;
     }
     int inicio = 0, final = tamanho, meio;
@@ -271,7 +271,7 @@ int pesquisa(produto estoque[], int codigo, int *tamanho){
 }
 
 int vazio(int tamanho){
-     if(tamanho==0){
+     if(tamanho == 0){
      	alinhaTexto(80, "CONTROLE DE ESTOQUE");
         printf("REGISTRO VAZIO!\n");
         system("pause");
@@ -282,27 +282,31 @@ int vazio(int tamanho){
 }
 
 void ordena(produto estoque[], int tamanho){
-	int i,j;
+	int i, j;
     produto aux;
-    for(i=0;i<tamanho-1;i++)
-        for(j=i+1;j<tamanho;j++)
-          	if (estoque[i].codigo>estoque[j].codigo){
-              	aux=estoque[i];
-              	estoque[i]=estoque[j];
-              	estoque[j]=aux;
+    for(i = 0; i < tamanho-1; i++){
+    	for(j = i + 1; j < tamanho; j++){
+        	if (estoque[i].codigo > estoque[j].codigo){
+              	aux = estoque[i];
+              	estoque[i] = estoque[j];
+              	estoque[j] = aux;
             }
+		}
+	}
 }
 
 void ordenaPreco(produto estoque[], int tamanho){
-	int i,j;
+	int i, j;
     produto aux;
-    for(i=0;i<tamanho-1;i++)
-        for(j=i+1;j<tamanho;j++)
-          	if (estoque[i].precoVenda>estoque[j].precoVenda){
-              	aux=estoque[i];
-              	estoque[i]=estoque[j];
-              	estoque[j]=aux;
+    for(i = 0; i < tamanho-1; i++){
+    	for(j = i + 1; j < tamanho; j++){
+        	if (estoque[i].precoVenda > estoque[j].precoVenda){
+              	aux = estoque[i];
+              	estoque[i] = estoque[j];
+              	estoque[j] = aux;
             }
+		}
+	}  	
 }
 
 // Função responsável pelo cadastro de novos produtos
@@ -654,8 +658,8 @@ void excluir (produto estoque[], int *tamanho){
 		if(validaCadastro == 1){
 			for (i = posicao; i < (*tamanho)-1; i++){
 				estoque[i] = estoque[i + 1];
-	    		(*tamanho)--;
 			} // copia os dados do proximo registro para o anterior
+			(*tamanho)--;
 		
             system("cls");
 			alinhaTexto(80, "EXCLUIR PRODUTO"); // copia os dados do proximo registro para o anterior  
@@ -702,7 +706,7 @@ void consultar(produto estoque[], int *tamanho){
 		
 		break;
 	case 2:
-		pesquisaDescricao(estoque, tamanho);
+		pesquisaNome(estoque, tamanho);
 		
 		break;
 	case 0:
@@ -747,7 +751,7 @@ void pesquisaCodigo(produto estoque[], int *tamanho){
 }
 
 // consulta por descricao
-void pesquisaDescricao(produto estoque[], int *tamanho){
+void pesquisaNome(produto estoque[], int *tamanho){
 	
 	produto resultados[MAX];
 	int n_resultados = 0;
@@ -1340,7 +1344,7 @@ void mostraFicha(produto estoque[], int index){
 	//Mostra o estoque em vermelho caso fique abaixo do estoque minimo
 	(estoque[index].quantidadeDisponivel == 0) ? 
 	printf("Quantidade em Estoque: \033[1;31m%-25.2f\033[0m   Quantidade Mínima: %6.2f\n", estoque[index].quantidadeDisponivel, estoque[index].estoque_min):
-	(estoque[index].quantidadeDisponivel < estoque[index].estoque_min) ? 
+	(estoque[index].quantidadeDisponivel <= estoque[index].estoque_min) ? 
 	printf("Quantidade em Estoque: \033[1;33m%-25.2f\033[0m   Quantidade Mínima: %6.2f\n", estoque[index].quantidadeDisponivel, estoque[index].estoque_min):
 	printf("Quantidade em Estoque: %-25.2f   Quantidade Mínima: %6.2f\n", estoque[index].quantidadeDisponivel, estoque[index].estoque_min);
 	
